@@ -1,0 +1,30 @@
+group 'net.mntone.httpclient.demo'
+version '0.8-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+defaultTasks 'compileJava'
+
+def jdkVersion = '1.6'
+sourceCompatibility = jdkVersion
+targetCompatibility = jdkVersion
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: '../net.mntone.httpclient/build/libs', include: '*.jar')
+    compile 'org.glassfish.jersey.bundles.repackaged:jersey-jsr166e:2.22.1'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'Main'
+        attributes 'Class-Path': configurations.compile.collect { "lib/${it.getName()}" }.join(' ')
+    }
+}
+
+mainClassName = 'net.mntone.httpclient.demo.Main'
