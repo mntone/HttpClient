@@ -307,6 +307,12 @@ public abstract class HttpContent implements Closeable
 		return this._headers;
 	}
 
+	protected void setContentType(final String mediaType)
+	{
+		final MediaTypeHeaderValue mediaTypeHeaderValue = new MediaTypeHeaderValue(mediaType);
+		this.getHeaders().setContentType(mediaTypeHeaderValue);
+	}
+
 	protected void setContentType(final String mediaType, Charset charset)
 	{
 		if (charset == null) charset = DEFAULT_CHARSET;
