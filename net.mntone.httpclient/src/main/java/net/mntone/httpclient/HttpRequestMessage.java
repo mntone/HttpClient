@@ -81,7 +81,6 @@ public class HttpRequestMessage implements Closeable
 	{
 		return this._method;
 	}
-
 	public void setMethod(final HttpMethod value)
 	{
 		if (value == null)
@@ -96,7 +95,6 @@ public class HttpRequestMessage implements Closeable
 	{
 		return this._requestUrl;
 	}
-
 	public void setRequestUrl(final URL value)
 	{
 		if (value == null || !HttpUtils.isHttpUrl(value)) throw new IllegalArgumentException();
@@ -117,7 +115,6 @@ public class HttpRequestMessage implements Closeable
 	{
 		return this._content;
 	}
-
 	public void setContent(final HttpContent content)
 	{
 		this.checkClosed();

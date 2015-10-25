@@ -47,7 +47,6 @@ public final class HttpResponseMessage implements Closeable
 	{
 		return this._requestMessage;
 	}
-
 	public void setRequestMessage(final HttpRequestMessage value)
 	{
 		this.checkClosed();
@@ -58,7 +57,6 @@ public final class HttpResponseMessage implements Closeable
 	{
 		return this._statusCode;
 	}
-
 	public void setStatusCode(final HttpStatusCode value)
 	{
 		this.checkClosed();
@@ -73,7 +71,6 @@ public final class HttpResponseMessage implements Closeable
 		}
 		return this._reasonPhrase;
 	}
-
 	public void setReasonPhrase(final String value)
 	{
 		if (value != null && containsNewLineCharacter(value))
@@ -97,7 +94,6 @@ public final class HttpResponseMessage implements Closeable
 	{
 		return this._content;
 	}
-
 	public void setContent(final HttpContent value)
 	{
 		this.checkClosed();

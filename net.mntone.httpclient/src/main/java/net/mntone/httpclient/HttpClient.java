@@ -11,6 +11,30 @@ import jersey.repackaged.jsr166e.CompletableFuture;
 
 public class HttpClient implements Closeable
 {
+	private static class AutoClose implements CompletableFuture.Fun<HttpResponseMessage, HttpResponseMessage>
+	{
+		private final HttpRequestMessage _request;
+
+		public AutoClose(final HttpRequestMessage request)
+		{
+			this._request = request;
+		}
+
+		@Override
+		public HttpResponseMessage apply(final HttpResponseMessage response)
+		{
+			try
+			{
+				this._request.close();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			return response;
+		}
+	}
+
 	private volatile boolean _closed = false;
 
 	private boolean _closeHandler = true;
@@ -110,7 +134,7 @@ public class HttpClient implements Closeable
 	public CompletableFuture<HttpResponseMessage> getAsync(final URL requestUrl)
 	{
 		final HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-		return this.sendAsync(request);
+		return this.sendAsync(request).thenApplyAsync(new AutoClose(request));
 	}
 
 	public CompletableFuture<InputStream> getInputStreamAsync(final String requestUrlText)
@@ -121,7 +145,7 @@ public class HttpClient implements Closeable
 	public CompletableFuture<InputStream> getInputStreamAsync(final URL requestUrl)
 	{
 		final HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-		return this.sendAsync(request).thenApply(new CompletableFuture.Fun<HttpResponseMessage, InputStream>()
+		return this.sendAsync(request).thenApplyAsync(new AutoClose(request)).thenApply(new CompletableFuture.Fun<HttpResponseMessage, InputStream>()
 		{
 			@Override
 			public InputStream apply(final HttpResponseMessage response)
@@ -159,7 +183,7 @@ public class HttpClient implements Closeable
 	public CompletableFuture<byte[]> getByteArrayAsync(final URL requestUrl)
 	{
 		final HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-		return this.sendAsync(request).thenApply(new CompletableFuture.Fun<HttpResponseMessage, byte[]>()
+		return this.sendAsync(request).thenApplyAsync(new AutoClose(request)).thenApply(new CompletableFuture.Fun<HttpResponseMessage, byte[]>()
 		{
 			@Override
 			public byte[] apply(final HttpResponseMessage response)
@@ -197,7 +221,7 @@ public class HttpClient implements Closeable
 	public CompletableFuture<String> getStringAsync(final URL requestUrl)
 	{
 		final HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-		return this.sendAsync(request).thenApply(new CompletableFuture.Fun<HttpResponseMessage, String>()
+		return this.sendAsync(request).thenApplyAsync(new AutoClose(request)).thenApply(new CompletableFuture.Fun<HttpResponseMessage, String>()
 		{
 			@Override
 			public String apply(final HttpResponseMessage response)
@@ -235,7 +259,7 @@ public class HttpClient implements Closeable
 	public CompletableFuture<HttpResponseMessage> headAsync(final URL requestUrl)
 	{
 		final HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Head, requestUrl);
-		return this.sendAsync(request);
+		return this.sendAsync(request).thenApplyAsync(new AutoClose(request));
 	}
 
 	public CompletableFuture<HttpResponseMessage> postAsync(final String requestUrlText, final HttpContent content)
@@ -247,7 +271,7 @@ public class HttpClient implements Closeable
 	{
 		final HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUrl);
 		request.setContent(content);
-		return this.sendAsync(request);
+		return this.sendAsync(request).thenApplyAsync(new AutoClose(request));
 	}
 
 	public CompletableFuture<HttpResponseMessage> putAsync(final String requestUrlText, final HttpContent content)
@@ -259,7 +283,7 @@ public class HttpClient implements Closeable
 	{
 		final HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Put, requestUrl);
 		request.setContent(content);
-		return this.sendAsync(request);
+		return this.sendAsync(request).thenApplyAsync(new AutoClose(request));
 	}
 
 	public CompletableFuture<HttpResponseMessage> deleteAsync(final String requestUrlText)
@@ -270,7 +294,7 @@ public class HttpClient implements Closeable
 	public CompletableFuture<HttpResponseMessage> deleteAsync(final URL requestUrl)
 	{
 		final HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Delete, requestUrl);
-		return this.sendAsync(request);
+		return this.sendAsync(request).thenApplyAsync(new AutoClose(request));
 	}
 
 	private static URL createUrl(final String requestUrlText)
