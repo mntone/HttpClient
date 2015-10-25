@@ -1,7 +1,5 @@
 package net.mntone.httpclient;
 
-import net.mntone.httpclient.headers.MediaTypeHeaderValue;
-
 import org.w3c.dom.Document;
 
 import java.io.ByteArrayOutputStream;
@@ -42,13 +40,8 @@ public final class XmlContent extends ByteArrayContent
 	{
 		super(getByteArrayContent(content, charset));
 
-		if (charset == null) charset = DEFAULT_CHARSET;
 		if (mediaType == null || mediaType.isEmpty()) mediaType = "application/xml";
-
-		final String charsetName = charset.name();
-		final MediaTypeHeaderValue mediaTypeHeaderValue = new MediaTypeHeaderValue(mediaType);
-		mediaTypeHeaderValue.setCharset(charsetName);
-		super.getHeaders().setContentType(mediaTypeHeaderValue);
+		this.setContentType(mediaType, charset);
 	}
 
 	private static byte[] getByteArrayContent(final Document content, Charset charset) throws TransformerException
