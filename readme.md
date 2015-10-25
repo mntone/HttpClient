@@ -23,7 +23,40 @@ try
 	final String responseText = client.getStringAsync("http://mntone.minibird.jp/").get();
 	System.out.print(responseText);
 }
-catch (Exception e) { }
+catch (final Exception e) { }
+```
+
+### Post content
+
+```java
+final HashMap<String, String> content = new HashMap<String, String>();
+content.put("test1", "test");
+content.put("test2", "test");
+
+final HttpClient client = new HttpClient();
+HttpResponseMessage res = null;
+try
+{
+	res = client.postAsync("http://httpbin.org/post", new FormUrlEncodedContent(content)).get();
+	final String resText = res.getContent().readAsStringAsync().get();
+	System.out.print(resText);
+}
+catch (final Exception e) { }
+finally
+{
+	if (res != null)
+	{
+		try
+		{
+			res.close();
+		}
+		catch (final IOException e) { }
+		finally
+		{
+			res = null;
+		}
+	}
+}
 ```
 
 ## LICENSE
