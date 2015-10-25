@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import jersey.repackaged.jsr166e.CompletableFuture;
 import jersey.repackaged.jsr166e.CompletionException;
 
-public final class ByteArrayContent extends HttpContent
+public class ByteArrayContent extends HttpContent
 {
 	private final byte[] _content;
 	private final int _offset;

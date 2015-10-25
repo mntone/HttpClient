@@ -26,7 +26,7 @@ public abstract class HttpContent implements Closeable
 {
 	private static final List<Map.Entry<Charset, byte[]>> CHARSETS_AND_BOMS;
 
-	private static final Charset DEFAULT_CHARSET;
+	protected static final Charset DEFAULT_CHARSET;
 
 	static
 	{
