@@ -4,7 +4,6 @@ import net.mntone.httpclient.headers.HttpHeaderNames;
 import net.mntone.httpclient.headers.HttpRequestHeaders;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.CookieHandler;
@@ -167,16 +166,14 @@ public class HttpClientHandler extends HttpMessageHandler
 		if (chunked != null && chunked)
 		{
 			state.httpUrlConnection.setChunkedStreamingMode(0);
-			final FilterOutputStream outputStream = new FilterOutputStream(state.httpUrlConnection.getOutputStream());
-			outputStream.write(state.requestMessage.getContent().readAsByteArrayAsync().get());
+			state.httpUrlConnection.getOutputStream().write(state.requestMessage.getContent().readAsByteArrayAsync().get());
 		}
 		else
 		{
 			final byte[] content = state.requestMessage.getContent().readAsByteArrayAsync().get();
 			state.httpUrlConnection.setRequestProperty(CONTENT_LENGTH, Integer.toString(content.length));
 
-			final FilterOutputStream outputStream = new FilterOutputStream(state.httpUrlConnection.getOutputStream());
-			outputStream.write(content);
+			state.httpUrlConnection.getOutputStream().write(content);
 		}
 		return this.createResponseMessage(state.httpUrlConnection, state.requestMessage);
 	}

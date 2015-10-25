@@ -144,7 +144,7 @@ public abstract class HttpContent implements Closeable
 						{
 							tempBuffer.close();
 						}
-						catch (IOException e)
+						catch (final IOException e)
 						{
 							e.printStackTrace();
 						}
@@ -156,18 +156,18 @@ public abstract class HttpContent implements Closeable
 					{
 						tempBuffer.close();
 					}
-					catch (IOException e)
+					catch (final IOException e)
 					{
 						e.printStackTrace();
 					}
 					HttpContent.this._bufferedContent = byteArray;
 				}
-				catch (InterruptedException e)
+				catch (final InterruptedException e)
 				{
 					e.printStackTrace();
 					throw new CompletionException(e.getMessage(), e);
 				}
-				catch (ExecutionException e)
+				catch (final ExecutionException e)
 				{
 					e.printStackTrace();
 					throw new CompletionException(e.getMessage(), e);
@@ -182,7 +182,7 @@ public abstract class HttpContent implements Closeable
 		return this.loadIntoBufferAsync().thenApplyAsync(new CompletableFuture.Fun<Void, InputStream>()
 		{
 			@Override
-			public InputStream apply(final Void _)
+			public InputStream apply(final Void ignored)
 			{
 				return new ByteArrayInputStream(HttpContent.this._bufferedContent);
 			}
@@ -195,7 +195,7 @@ public abstract class HttpContent implements Closeable
 		return this.loadIntoBufferAsync().thenApplyAsync(new CompletableFuture.Fun<Void, byte[]>()
 		{
 			@Override
-			public byte[] apply(final Void _)
+			public byte[] apply(final Void ignored)
 			{
 				return HttpContent.this._bufferedContent;
 			}
@@ -207,7 +207,7 @@ public abstract class HttpContent implements Closeable
 		return this.loadIntoBufferAsync().thenApplyAsync(new CompletableFuture.Fun<Void, String>()
 		{
 			@Override
-			public String apply(final Void _)
+			public String apply(final Void ignored)
 			{
 				final byte[] target = HttpContent.this._bufferedContent;
 				if (target.length == 0) return "";
@@ -263,7 +263,7 @@ public abstract class HttpContent implements Closeable
 		return this.loadIntoBufferAsync().thenApplyAsync(new CompletableFuture.Fun<Void, String>()
 		{
 			@Override
-			public String apply(final Void _)
+			public String apply(final Void ignored)
 			{
 				final byte[] target = HttpContent.this._bufferedContent;
 				if (target.length == 0) return "";
