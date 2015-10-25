@@ -9,6 +9,7 @@ final class HttpGenericHeaders
 	{
 		parserStore.put(HttpHeaderNames.CONNECTION, HttpGenericHeaderParser.TokenListParser);
 		parserStore.put(HttpHeaderNames.TRAILER, HttpGenericHeaderParser.TokenListParser);
+		parserStore.put(HttpHeaderNames.TRANSFER_ENCODING, TransferEncodingHeaderParser.MultipleValuesParser);
 	}
 
 	static int KNOWN_HEADERS_COUNT = 9;
@@ -27,12 +28,14 @@ final class HttpGenericHeaders
 
 	private final HttpHeaders _parent;
 
+	private boolean _transferEncodingChunkedSet = false;
+
 	public HttpGenericHeaders(final HttpHeaders parent)
 	{
 		this._parent = parent;
 	}
 
-	public HttpHeaderValueCollection<String> getConnectionCore()
+	HttpHeaderValueCollection<String> getConnectionCore()
 	{
 		if (this._connectionCore == null)
 		{
@@ -42,13 +45,52 @@ final class HttpGenericHeaders
 	}
 	private HttpHeaderValueCollection<String> _connectionCore;
 
-	public HttpHeaderValueCollection<String> getTrailerCore()
+	public HttpHeaderValueCollection<String> getTrailer()
 	{
-		if (this._trailerCore == null)
+		if (this._trailer == null)
 		{
-			this._trailerCore = new HttpHeaderValueCollection<String>(HttpHeaderNames.TRAILER, this._parent, HttpHeaderUtils.getTokenValidator(), String.class);
+			this._trailer = new HttpHeaderValueCollection<String>(HttpHeaderNames.TRAILER, this._parent, HttpHeaderUtils.getTokenValidator(), String.class);
 		}
-		return this._trailerCore;
+		return this._trailer;
 	}
-	private HttpHeaderValueCollection<String> _trailerCore;
+	private HttpHeaderValueCollection<String> _trailer;
+
+
+	public HttpHeaderValueCollection<TransferEncodingHeaderValue> getTransferEncoding()
+	{
+		return this.getTransferEncodingCore();
+	}
+
+	public Boolean getTransferEncodingChunked()
+	{
+		if (this.getTransferEncodingCore().isSpecialValueSet()) return true;
+		if (this._transferEncodingChunkedSet) return false;
+		return null;
+	}
+	public void setTransferEncodingChunked(final Boolean value)
+	{
+		if (value)
+		{
+			this._transferEncodingChunkedSet = true;
+			this._transferEncodingCore.setSpecialValue();
+		}
+		else
+		{
+			this._transferEncodingChunkedSet = false;
+			this._transferEncodingCore.removeSpecialValue();
+		}
+	}
+
+	HttpHeaderValueCollection<TransferEncodingHeaderValue> getTransferEncodingCore()
+	{
+		if (this._transferEncodingCore == null)
+		{
+			this._transferEncodingCore = new HttpHeaderValueCollection<TransferEncodingHeaderValue>(HttpHeaderNames.TRANSFER_ENCODING,
+			                                                                                        this._parent,
+			                                                                                        HttpHeaderUtils.TRANSFER_ENCODING_CHUNKCED,
+			                                                                                        TransferEncodingHeaderValue.class);
+		}
+		return this._transferEncodingCore;
+	}
+	private HttpHeaderValueCollection<TransferEncodingHeaderValue> _transferEncodingCore;
 }

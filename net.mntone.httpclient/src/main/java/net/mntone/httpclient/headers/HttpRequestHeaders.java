@@ -29,6 +29,7 @@ public final class HttpRequestHeaders extends HttpHeaders
 		parserStore.put(HttpHeaderNames.HOST, HttpGenericHeaderParser.HostParser);
 		parserStore.put(HttpHeaderNames.IF_MATCH, HttpGenericHeaderParser.MultipleValueEntityTagParser);
 		parserStore.put(HttpHeaderNames.IF_NONE_MATCH, HttpGenericHeaderParser.MultipleValueEntityTagParser);
+		parserStore.put(HttpHeaderNames.TE, TransferEncodingWithQualityHeaderParser.MultipleValuesParser);
 	}
 
 	static int KNOWN_HEADERS_COUNT = 19;
@@ -104,6 +105,20 @@ public final class HttpRequestHeaders extends HttpHeaders
 
 	public HttpHeaderValueCollection<String> getTrailer()
 	{
-		return this._genericHeaders.getTrailerCore();
+		return this._genericHeaders.getTrailer();
+	}
+
+	public HttpHeaderValueCollection<TransferEncodingHeaderValue> getTransferEncoding()
+	{
+		return this._genericHeaders.getTransferEncoding();
+	}
+
+	public Boolean getTransferEncodingChunked()
+	{
+		return this._genericHeaders.getTransferEncodingChunked();
+	}
+	public void setTransferEncodingChunked(final Boolean value)
+	{
+		this._genericHeaders.setTransferEncodingChunked(value);
 	}
 }

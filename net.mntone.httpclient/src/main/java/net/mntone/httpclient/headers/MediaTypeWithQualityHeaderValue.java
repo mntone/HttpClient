@@ -4,8 +4,6 @@ import javax.xml.ws.Holder;
 
 public final class MediaTypeWithQualityHeaderValue extends MediaTypeHeaderValueBase
 {
-	private static final String QUALITY = "q";
-
 	MediaTypeWithQualityHeaderValue()
 	{ }
 
@@ -32,34 +30,11 @@ public final class MediaTypeWithQualityHeaderValue extends MediaTypeHeaderValueB
 
 	public final Double getQuality()
 	{
-		final NameValueHeaderValue nameValueHeaderValue = NameValueHeaderValue.find(this._parameters, QUALITY);
-		if (nameValueHeaderValue == null) return null;
-
-		try
-		{
-			final double quality = Double.parseDouble(nameValueHeaderValue.getValue());
-			return quality;
-		}
-		catch (NumberFormatException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
+		return HttpHeaderUtils.getQuality(this.getParameters());
 	}
-
 	public final void setQuality(final Double value)
 	{
-		final NameValueHeaderValue nameValueHeaderValue = NameValueHeaderValue.find(this._parameters, QUALITY);
-		if (value == null)
-		{
-			if (nameValueHeaderValue != null) this._parameters.remove(nameValueHeaderValue);
-		}
-		else
-		{
-			if (value < 0.0 || value > 1.0) throw new IllegalArgumentException();
-			if (nameValueHeaderValue != null) nameValueHeaderValue.setValue(value.toString());
-			else this.getParameters().add(new NameValueHeaderValue(QUALITY, value.toString()));
-		}
+		HttpHeaderUtils.setQuality(this.getParameters(), value);
 	}
 
 	public static MediaTypeWithQualityHeaderValue parse(final String input)

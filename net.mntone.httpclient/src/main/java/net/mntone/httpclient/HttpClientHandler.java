@@ -4,6 +4,7 @@ import net.mntone.httpclient.headers.HttpHeaderNames;
 import net.mntone.httpclient.headers.HttpRequestHeaders;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.CookieHandler;
@@ -15,13 +16,13 @@ import java.util.EnumSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
 
 import jersey.repackaged.jsr166e.CompletableFuture;
 import jersey.repackaged.jsr166e.CompletionException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class HttpClientHandler extends HttpMessageHandler
 {
@@ -90,10 +91,9 @@ public class HttpClientHandler extends HttpMessageHandler
 				{
 					httpUrlConnection = HttpClientHandler.this.createAndPrepareHttpURLConnection(request);
 					requestState.httpUrlConnection = httpUrlConnection;
-					final HttpResponseMessage response = HttpClientHandler.this.startRequest(requestState);
-					return response;
+					return HttpClientHandler.this.startRequest(requestState);
 				}
-				catch (IOException e)
+				catch (final Exception e)
 				{
 					if (httpUrlConnection != null)
 					{
@@ -148,7 +148,7 @@ public class HttpClientHandler extends HttpMessageHandler
 		else CookieHandler.setDefault(null);
 	}
 
-	private HttpResponseMessage startRequest(final RequestState state) throws IOException
+	private HttpResponseMessage startRequest(final RequestState state) throws IOException, ExecutionException, InterruptedException
 	{
 		if (state.requestMessage.getContent() != null)
 		{
@@ -159,11 +159,26 @@ public class HttpClientHandler extends HttpMessageHandler
 		return this.startGettingResponse(state);
 	}
 
-	private HttpResponseMessage startUploadingContent(final RequestState state)
+	private HttpResponseMessage startUploadingContent(final RequestState state) throws IOException, ExecutionException, InterruptedException
 	{
 		state.httpUrlConnection.setDoOutput(true);
-		state.httpUrlConnection.setChunkedStreamingMode(0);
-		throw new NotImplementedException();
+
+		final Boolean chunked = state.requestMessage.getHeaders().getTransferEncodingChunked();
+		if (chunked != null && chunked)
+		{
+			state.httpUrlConnection.setChunkedStreamingMode(0);
+			final FilterOutputStream outputStream = new FilterOutputStream(state.httpUrlConnection.getOutputStream());
+			outputStream.write(state.requestMessage.getContent().readAsByteArrayAsync().get());
+		}
+		else
+		{
+			final byte[] content = state.requestMessage.getContent().readAsByteArrayAsync().get();
+			state.httpUrlConnection.setRequestProperty(CONTENT_LENGTH, Integer.toString(content.length));
+
+			final FilterOutputStream outputStream = new FilterOutputStream(state.httpUrlConnection.getOutputStream());
+			outputStream.write(content);
+		}
+		return this.createResponseMessage(state.httpUrlConnection, state.requestMessage);
 	}
 
 	private HttpResponseMessage startGettingResponse(final RequestState state) throws IOException
@@ -281,8 +296,8 @@ public class HttpClientHandler extends HttpMessageHandler
 	{
 		final String contentEncoding = connection.getContentEncoding();
 		if (this._automaticDecompression.contains(DecompressionMethods.GZip) && "gzip".equals(contentEncoding)) return new GZIPInputStream(connection.getInputStream());
-		if (this._automaticDecompression.contains(DecompressionMethods.Deflate) && "deflate".equals(contentEncoding)) return new InflaterInputStream(connection.getInputStream(), new
-				Inflater(true));
+		if (this._automaticDecompression.contains(DecompressionMethods.Deflate) && "deflate".equals(contentEncoding))
+			return new InflaterInputStream(connection.getInputStream(), new Inflater(true));
 		return connection.getInputStream();
 	}
 

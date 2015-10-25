@@ -20,6 +20,31 @@ public final class FormUrlEncodedContent extends ByteArrayContent
 		this.setContentType("application/x-www-form-urlencoded", charset);
 	}
 
+	private static void setKeyValuePair(final StringBuilder builder, final Map.Entry<String, String> keyValuePair, final String encoding) throws UnsupportedEncodingException
+	{
+		builder.append(URLEncoder.encode(keyValuePair.getKey(), encoding));
+		builder.append('=');
+		builder.append(URLEncoder.encode(keyValuePair.getValue(), encoding));
+	}
+
+	public FormUrlEncodedContent(final Map<String, String> content) throws UnsupportedEncodingException
+	{
+		this(content, null);
+	}
+
+	public FormUrlEncodedContent(final Map<String, String> content, final Charset charset) throws UnsupportedEncodingException
+	{
+		super(getByteArrayContent(content, charset));
+
+		this.setContentType("application/x-www-form-urlencoded", charset);
+	}
+
+	private static byte[] getByteArrayContent(final Map<String, String> content, Charset charset) throws UnsupportedEncodingException
+	{
+		if (content == null) throw new IllegalArgumentException();
+		return getByteArrayContent(content.entrySet().iterator(), charset);
+	}
+
 	private static byte[] getByteArrayContent(final Iterator<Map.Entry<String, String>> content, Charset charset) throws UnsupportedEncodingException
 	{
 		if (content == null) throw new IllegalArgumentException();
@@ -40,12 +65,5 @@ public final class FormUrlEncodedContent extends ByteArrayContent
 		}
 
 		return builder.toString().getBytes(charset);
-	}
-
-	private static void setKeyValuePair(final StringBuilder builder, final Map.Entry<String, String> keyValuePair, final String encoding) throws UnsupportedEncodingException
-	{
-		builder.append(URLEncoder.encode(keyValuePair.getKey(), encoding));
-		builder.append('=');
-		builder.append(URLEncoder.encode(keyValuePair.getValue(), encoding));
 	}
 }

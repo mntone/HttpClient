@@ -19,6 +19,8 @@ final class HttpHeaderUtils
 		}
 	};
 
+	static final TransferEncodingHeaderValue TRANSFER_ENCODING_CHUNKCED = new TransferEncodingHeaderValue("chunked");
+
 	private static final HttpHeaderParser.EqualityComparer _ignoreCaseStringComparer = new HttpHeaderParser.EqualityComparer()
 	{
 		@Override
@@ -46,6 +48,37 @@ final class HttpHeaderUtils
 	public static void validateToken(final HttpHeaderValueCollection<String> target, final String value)
 	{
 		checkValidToken(value);
+	}
+
+	private static final String QUALITY = "q";
+	public static Double getQuality(final Collection<NameValueHeaderValue> parameters)
+	{
+		final NameValueHeaderValue nameValueHeaderValue = NameValueHeaderValue.find(parameters, QUALITY);
+		if (nameValueHeaderValue == null) return null;
+
+		try
+		{
+			return Double.parseDouble(nameValueHeaderValue.getValue());
+		}
+		catch (final NumberFormatException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+	public static void setQuality(final Collection<NameValueHeaderValue> parameters, final Double value)
+	{
+		final NameValueHeaderValue nameValueHeaderValue = NameValueHeaderValue.find(parameters, QUALITY);
+		if (value == null)
+		{
+			if (nameValueHeaderValue != null) parameters.remove(nameValueHeaderValue);
+		}
+		else
+		{
+			if (value < 0.0 || value > 1.0) throw new IllegalArgumentException();
+			if (nameValueHeaderValue != null) nameValueHeaderValue.setValue(value.toString());
+			else parameters.add(new NameValueHeaderValue(QUALITY, value.toString()));
+		}
 	}
 
 	public static <T> boolean equalsCollection(final Collection<T> x, final Collection<T> y)

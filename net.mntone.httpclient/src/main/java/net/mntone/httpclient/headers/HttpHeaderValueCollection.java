@@ -178,4 +178,22 @@ public final class HttpHeaderValueCollection<T> implements Collection<T>
 		final List<Object> list = (List<Object>)parsedValue;
 		return list.size();
 	}
+
+	boolean isSpecialValueSet()
+	{
+		return this._specialValue != null && this._store.containsParsedValue(this._headerName, this._specialValue);
+	}
+
+	void setSpecialValue()
+	{
+		if (!this._store.containsParsedValue(this._headerName, this._specialValue))
+		{
+			this._store.putParsedValue(this._headerName, this._specialValue);
+		}
+	}
+
+	void removeSpecialValue()
+	{
+		this._store.removeParsedValue(this._headerName, this._specialValue);
+	}
 }

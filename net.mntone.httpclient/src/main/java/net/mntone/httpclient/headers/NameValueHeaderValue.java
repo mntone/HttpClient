@@ -104,6 +104,13 @@ public class NameValueHeaderValue implements Cloneable
 		return builder.toString();
 	}
 
+	static String toString(final Collection<NameValueHeaderValue> collection, final char delimiter, final boolean leadingSeparator)
+	{
+		final StringBuilder builder = new StringBuilder();
+		appendString(builder, collection, delimiter, leadingSeparator);
+		return builder.toString();
+	}
+
 	static void appendString(final StringBuilder builder, final Collection<NameValueHeaderValue> collection, final char delimiter, final boolean leadingSeparator)
 	{
 		for (final NameValueHeaderValue item : collection)

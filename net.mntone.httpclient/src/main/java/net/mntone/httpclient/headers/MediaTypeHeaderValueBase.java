@@ -70,7 +70,7 @@ public abstract class MediaTypeHeaderValueBase implements Cloneable
 	@Override
 	public String toString()
 	{
-		return this._mediaType;
+		return this._mediaType + NameValueHeaderValue.toString(this._parameters, ';', true);
 	}
 
 	public final String getMediaType()

@@ -84,7 +84,7 @@ public final class HttpResponseHeaders extends HttpHeaders
 
 	public HttpHeaderValueCollection<String> getTrailer()
 	{
-		return this._genericHeaders.getTrailerCore();
+		return this._genericHeaders.getTrailer();
 	}
 
 	public HttpHeaderValueCollection<String> getVary()

@@ -14,8 +14,8 @@ final class MediaTypeHeaderParser extends BaseHeaderParser
 	@Override
 	protected int getParsedValueLength(final String value, final int startIndex, final Object storeValue, final Holder<Object> parsedValue)
 	{
-		final Holder<MediaTypeHeaderValueBase> mediaTypeHeaderValue = new Holder<MediaTypeHeaderValueBase>();
-		final int mediaTypeLength = MediaTypeHeaderValueBase.getMediaTypeLength(value, startIndex, mediaTypeHeaderValue, MediaTypeHeaderValueBase.class);
+		final Holder<MediaTypeHeaderValue> mediaTypeHeaderValue = new Holder<MediaTypeHeaderValue>();
+		final int mediaTypeLength = MediaTypeHeaderValueBase.getMediaTypeLength(value, startIndex, mediaTypeHeaderValue, MediaTypeHeaderValue.class);
 		parsedValue.value = mediaTypeHeaderValue.value;
 		return mediaTypeLength;
 	}
