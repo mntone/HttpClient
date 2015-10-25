@@ -41,7 +41,7 @@ public class HttpRequestMessage implements Closeable
 	private void initializeValues(final HttpMethod method, final URL requestUrl)
 	{
 		if (method == null) throw new IllegalArgumentException();
-		if (requestUrl == null || (!HttpUtil.isHttpUrl(requestUrl)))
+		if (requestUrl == null || (!HttpUtils.isHttpUrl(requestUrl)))
 		{
 			throw new IllegalArgumentException();
 		}
@@ -99,7 +99,7 @@ public class HttpRequestMessage implements Closeable
 
 	public void setRequestUrl(final URL value)
 	{
-		if (value == null || !HttpUtil.isHttpUrl(value)) throw new IllegalArgumentException();
+		if (value == null || !HttpUtils.isHttpUrl(value)) throw new IllegalArgumentException();
 		this.checkClosed();
 		this._requestUrl = value;
 	}

@@ -4,7 +4,7 @@ import java.net.URL;
 
 import javax.xml.ws.Holder;
 
-public final class HttpUtil
+public final class HttpUtils
 {
 	public static int getNextNonEmptyOrWhitespaceIndex(final String input, final int startIndex, final boolean skipEmptyValues, final Holder<Boolean> seperatorFound)
 	{
