@@ -59,6 +59,22 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 		}
 	});
 
+	private static class NameValueParser implements ParsedValueLengthGetter
+	{
+		@Override
+		public int apply(final String value, final int startIndex, final Holder<Object> parsedValue)
+		{
+			final Holder<NameValueHeaderValue> nameValueHeaderValue = new Holder<NameValueHeaderValue>();
+			final int nameValueLength = NameValueHeaderValue.getNameValueLength(value, startIndex, nameValueHeaderValue, NameValueHeaderValue.class);
+			parsedValue.value = nameValueHeaderValue.value;
+			return nameValueLength;
+		}
+	}
+
+	public static final HttpHeaderParser SingleValueNameValueParser = new HttpGenericHeaderParser(false, new NameValueParser());
+	public static final HttpHeaderParser MultipleValueNameValueParser = new HttpGenericHeaderParser(true, new NameValueParser());
+
+
 	private final ParsedValueLengthGetter _lengthGetter;
 	private final EqualityComparer _comparer;
 

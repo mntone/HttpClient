@@ -82,9 +82,28 @@ public final class HttpResponseHeaders extends HttpHeaders
 		super.setOrRemoveParsedValue(HttpHeaderNames.ENTITY_TAG, value);
 	}
 
+	public HttpHeaderValueCollection<NameValueHeaderValue> getPragma()
+	{
+		return this._genericHeaders.getPragma();
+	}
+
 	public HttpHeaderValueCollection<String> getTrailer()
 	{
 		return this._genericHeaders.getTrailer();
+	}
+
+	public HttpHeaderValueCollection<TransferEncodingHeaderValue> getTransferEncoding()
+	{
+		return this._genericHeaders.getTransferEncoding();
+	}
+
+	public Boolean getTransferEncodingChunked()
+	{
+		return this._genericHeaders.getTransferEncodingChunked();
+	}
+	public void setTransferEncodingChunked(final Boolean value)
+	{
+		this._genericHeaders.setTransferEncodingChunked(value);
 	}
 
 	public HttpHeaderValueCollection<String> getVary()

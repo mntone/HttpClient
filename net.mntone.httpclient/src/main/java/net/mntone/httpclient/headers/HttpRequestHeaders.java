@@ -103,6 +103,11 @@ public final class HttpRequestHeaders extends HttpHeaders
 	}
 	private HttpHeaderValueCollection<EntityTagHeaderValue> _isNoneMatch;
 
+	public HttpHeaderValueCollection<NameValueHeaderValue> getPragma()
+	{
+		return this._genericHeaders.getPragma();
+	}
+
 	public HttpHeaderValueCollection<String> getTrailer()
 	{
 		return this._genericHeaders.getTrailer();

@@ -8,6 +8,7 @@ final class HttpGenericHeaders
 	static void putParsers(final Map<String, HttpHeaderParser> parserStore)
 	{
 		parserStore.put(HttpHeaderNames.CONNECTION, HttpGenericHeaderParser.TokenListParser);
+		parserStore.put(HttpHeaderNames.PRAGMA, HttpGenericHeaderParser.MultipleValueNameValueParser);
 		parserStore.put(HttpHeaderNames.TRAILER, HttpGenericHeaderParser.TokenListParser);
 		parserStore.put(HttpHeaderNames.TRANSFER_ENCODING, TransferEncodingHeaderParser.MultipleValuesParser);
 	}
@@ -44,6 +45,16 @@ final class HttpGenericHeaders
 		return this._connectionCore;
 	}
 	private HttpHeaderValueCollection<String> _connectionCore;
+
+	public HttpHeaderValueCollection<NameValueHeaderValue> getPragma()
+	{
+		if (this._pragma == null)
+		{
+			this._pragma = new HttpHeaderValueCollection<NameValueHeaderValue>(HttpHeaderNames.PRAGMA, this._parent, NameValueHeaderValue.class);
+		}
+		return this._pragma;
+	}
+	private HttpHeaderValueCollection<NameValueHeaderValue> _pragma;
 
 	public HttpHeaderValueCollection<String> getTrailer()
 	{
