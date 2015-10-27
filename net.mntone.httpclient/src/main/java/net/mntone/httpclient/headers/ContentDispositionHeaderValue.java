@@ -167,41 +167,47 @@ public final class ContentDispositionHeaderValue extends HttpParameterValueBase
 		}
 	}
 
-	static int getDispositionTypeLength(final String input, final int startIndex, final Holder<ContentDispositionHeaderValue> parsedValue)
+	static int getDispositionTypeLength(final String input, final Holder<Integer> index, final Holder<ContentDispositionHeaderValue> parsedValue)
 	{
 		final int length = input.length();
-		if (startIndex >= length) return 0;
+		if (index.value >= length) return 0;
 
+		final Holder<Integer> index2 = new Holder<Integer>(index.value);
 		final Holder<String> dispositionType = new Holder<String>();
-		final int dispositionTypeExpressionLength = getDispositionTypeExpressionLength(input, startIndex, dispositionType);
+		final int dispositionTypeExpressionLength = getDispositionTypeExpressionLength(input, index2, dispositionType);
 		if (dispositionTypeExpressionLength == 0) return 0;
 
-		int i = startIndex + dispositionTypeExpressionLength;
-		i += HttpRuleParser.getWhitespaceLength(input, i);
+		HttpRuleParser.getWhitespaceLength(input, index2);
 
 		final ContentDispositionHeaderValue contentDispositionHeaderValue = new ContentDispositionHeaderValue();
 		contentDispositionHeaderValue._dispositionType = dispositionType.value;
-		if (i > length || input.charAt(i) != ';')
+		if (index2.value > length || input.charAt(index2.value) != ';')
 		{
 			parsedValue.value = contentDispositionHeaderValue;
-			return i - startIndex;
+
+			final int a = index2.value - index.value;
+			index.value = index2.value;
+			return a;
 		}
+		++index2.value;
 
-		++i;
-		final int nameValueListLength = NameValueHeaderValue.getNameValueCollectionLength(input, i, ';', contentDispositionHeaderValue.getParameters(), NameValueHeaderValue.class);
+		final int nameValueListLength = NameValueHeaderValue.getNameValueCollectionLength(input, index2, ';', contentDispositionHeaderValue.getParameters(), NameValueHeaderValue.class);
 		if (nameValueListLength == 0) return 0;
-
-		i += nameValueListLength;
 		parsedValue.value = contentDispositionHeaderValue;
-		return i - startIndex;
+
+		final int a = index2.value - index.value;
+		index.value = index2.value;
+		return a;
 	}
 
-	private static int getDispositionTypeExpressionLength(final String input, final int startIndex, final Holder<String> dispositionType)
+	private static int getDispositionTypeExpressionLength(final String input, final Holder<Integer> index, final Holder<String> dispositionType)
 	{
-		final int tokenLength = HttpRuleParser.getTokenLength(input, startIndex);
+		final Holder<Integer> index2 = new Holder<Integer>(index.value);
+		final int tokenLength = HttpRuleParser.getTokenLength(input, index2);
 		if (tokenLength == 0) return 0;
+		dispositionType.value = input.substring(index.value, index2.value);
 
-		dispositionType.value = input.substring(startIndex, tokenLength);
+		index.value = index2.value;
 		return tokenLength;
 	}
 
@@ -209,8 +215,9 @@ public final class ContentDispositionHeaderValue extends HttpParameterValueBase
 	{
 		if (dispositionType == null || dispositionType.isEmpty()) throw new IllegalArgumentException();
 
+		final Holder<Integer> index = new Holder<Integer>(0);
 		final Holder<String> parsedDispositionType = new Holder<String>();
-		if (getDispositionTypeExpressionLength(dispositionType, 0, parsedDispositionType) == 0 || parsedDispositionType.value.length() != dispositionType.length())
+		if (getDispositionTypeExpressionLength(dispositionType, index, parsedDispositionType) == 0 || parsedDispositionType.value.length() != dispositionType.length())
 		{
 			throw new IllegalArgumentException();
 		}

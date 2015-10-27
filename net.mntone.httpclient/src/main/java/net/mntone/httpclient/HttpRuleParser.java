@@ -19,21 +19,21 @@ public final class HttpRuleParser
 	static
 	{
 		dateTimeFormats = new String[] {
-				"E, d MMM yyyy H':'m':'s 'GMT'",
-				"E, d MMM yyyy H':'m':'s",
-				"d MMM yyyy H':'m':'s 'GMT'",
-				"d MMM yyyy H':'m':'s",
-				"E, d MMM yy H':'m':'s 'GMT'",
-				"E, d MMM yy H':'m':'s",
-				"d MMM yy H':'m':'s 'GMT'",
-				"d MMM yy H':'m':'s",
-				"EEEE, d'-'MMM'-'yy H':'m':'s 'GMT'",
-				"EEEE, d'-'MMM'-'yy H':'m':'s",
-				"E MMM d H':'m':'s yyyy",
-				"E, d MMM yyyy H':'m':'s zzz",
-				"E, d MMM yyyy H':'m':'s",
-				"d MMM yyyy H':'m':'s zzz",
-				"d MMM yyyy H':'m':'s"
+			"E, d MMM yyyy H':'m':'s 'GMT'",
+			"E, d MMM yyyy H':'m':'s",
+			"d MMM yyyy H':'m':'s 'GMT'",
+			"d MMM yyyy H':'m':'s",
+			"E, d MMM yy H':'m':'s 'GMT'",
+			"E, d MMM yy H':'m':'s",
+			"d MMM yy H':'m':'s 'GMT'",
+			"d MMM yy H':'m':'s",
+			"EEEE, d'-'MMM'-'yy H':'m':'s 'GMT'",
+			"EEEE, d'-'MMM'-'yy H':'m':'s",
+			"E MMM d H':'m':'s yyyy",
+			"E, d MMM yyyy H':'m':'s zzz",
+			"E, d MMM yyyy H':'m':'s",
+			"d MMM yyyy H':'m':'s zzz",
+			"d MMM yyyy H':'m':'s"
 		};
 
 		tokenCharacters = new boolean[128];
@@ -68,7 +68,7 @@ public final class HttpRuleParser
 			{
 				if (c != '\r' && i + 2 < length && input.charAt(i + 1) == '\n')
 				{
-					char c2 = input.charAt(i + 2);
+					final char c2 = input.charAt(i + 2);
 					if (c2 == ' ' || c2 == '\t')
 					{
 						i += 3;
@@ -79,6 +79,36 @@ public final class HttpRuleParser
 			}
 		}
 		return length - startIndex;
+	}
+
+	public static int getWhitespaceLength(final String input, final Holder<Integer> index)
+	{
+		final int length = input.length();
+		if (index.value >= length) return 0;
+
+		for (int i = index.value; i < length; ++i)
+		{
+			final char c = input.charAt(i);
+			if (c != ' ' && c != '\t')
+			{
+				if (c != '\r' && i + 2 < length && input.charAt(i + 1) == '\n')
+				{
+					final char c2 = input.charAt(i + 2);
+					if (c2 == ' ' || c2 == '\t')
+					{
+						i += 3;
+						continue;
+					}
+				}
+				final int a = i - index.value;
+				index.value = i;
+				return a;
+			}
+		}
+
+		final int a = length - index.value;
+		index.value = length;
+		return a;
 	}
 
 	public static int getTokenLength(final String input, final int startIndex)
@@ -95,12 +125,32 @@ public final class HttpRuleParser
 		return length - startIndex;
 	}
 
-	public static int getNumberLength(final String input, final int startIndex, final boolean allowDecimal)
+	public static int getTokenLength(final String input, final Holder<Integer> index)
 	{
 		final int length = input.length();
-		if (startIndex >= length) return 0;
+		if (index.value >= length) return 0;
 
-		int i = startIndex;
+		for (int i = index.value; i < length; ++i)
+		{
+			if (!isTokenChar(input.charAt(i)))
+			{
+				final int a = i - index.value;
+				index.value = i;
+				return a;
+			}
+		}
+
+		final int a = length - index.value;
+		index.value = length;
+		return a;
+	}
+
+	public static int getNumberLength(final String input, final Holder<Integer> index, final boolean allowDecimal)
+	{
+		final int length = input.length();
+		if (index.value >= length) return 0;
+
+		int i = index.value;
 		if (input.charAt(i) == '.') return 0;
 
 		boolean notAllowDecimal = !allowDecimal;
@@ -116,15 +166,18 @@ public final class HttpRuleParser
 				++i;
 			}
 		}
-		return i - startIndex;
+
+		final int a = i - index.value;
+		index.value = i;
+		return a;
 	}
 
-	public static int getHostLength(final String input, final int startIndex, final boolean allowToken, final Holder<String> host)
+	public static int getHostLength(final String input, final Holder<Integer> index, final boolean allowToken, final Holder<String> host)
 	{
 		final int length = input.length();
-		if (startIndex >= length) return 0;
+		if (index.value >= length) return 0;
 
-		int i = startIndex;
+		int i = index.value;
 		boolean flag = true;
 		while (i < length)
 		{
@@ -135,13 +188,14 @@ public final class HttpRuleParser
 			++i;
 		}
 
-		final int pos = i - startIndex;
+		final int pos = i - index.value;
 		if (pos == 0) return 0;
 
-		final String hostText = input.substring(startIndex, pos);
+		final String hostText = input.substring(index.value, i);
 		if ((!allowToken || !flag) && isValidHostName(hostText)) return 0;
 
 		host.value = hostText;
+		index.value = i;
 		return pos;
 	}
 

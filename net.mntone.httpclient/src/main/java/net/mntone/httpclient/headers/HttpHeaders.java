@@ -80,7 +80,7 @@ public abstract class HttpHeaders implements Iterable<Map.Entry<String, String[]
 
 	final Object getParsedValue(final String name)
 	{
-		Holder<HeaderStoreItemInfo> info = new Holder<HeaderStoreItemInfo>();
+		final Holder<HeaderStoreItemInfo> info = new Holder<HeaderStoreItemInfo>();
 		if (!this.tryGetAndParseHeaderInfo(name, info))
 		{
 			return null;
@@ -361,7 +361,7 @@ public abstract class HttpHeaders implements Iterable<Map.Entry<String, String[]
 	private HeaderStoreItemInfo getOrCreateHeaderInfo(final String name, final boolean parseRawValues)
 	{
 		final Holder<HeaderStoreItemInfo> result = new Holder<HeaderStoreItemInfo>();
-		boolean flag = false;
+		boolean flag;
 		if (parseRawValues)
 		{
 			flag = this.tryGetAndParseHeaderInfo(name, result);
@@ -631,7 +631,7 @@ public abstract class HttpHeaders implements Iterable<Map.Entry<String, String[]
 		{
 			if (obj.value != null)
 			{
-				addValue(info, obj, StoreLocation.Parsed);
+				addValue(info, obj.value, StoreLocation.Parsed);
 			}
 			return true;
 		}

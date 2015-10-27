@@ -16,10 +16,10 @@ final class Int64NumberHeaderParser extends BaseHeaderParser
 	@Override
 	protected int getParsedValueLength(final String value, final int startIndex, final Object storeValue, final Holder<Object> parsedValue)
 	{
-		final int numberLength = HttpRuleParser.getNumberLength(value, startIndex, false);
+		final Holder<Integer> index = new Holder<Integer>(startIndex);
+		final int numberLength = HttpRuleParser.getNumberLength(value, index, false);
 		if (numberLength <= 0 || numberLength >= 19) return 0;
-
-		final String numberText = value.substring(startIndex, numberLength);
+		final String numberText = value.substring(startIndex, index.value);
 
 		long number = 0;
 		try

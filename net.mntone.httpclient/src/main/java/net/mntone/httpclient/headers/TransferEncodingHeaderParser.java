@@ -15,8 +15,9 @@ final class TransferEncodingHeaderParser extends BaseHeaderParser
 	@Override
 	protected int getParsedValueLength(final String value, final int startIndex, final Object storeValue, final Holder<Object> parsedValue)
 	{
+		final Holder<Integer> index = new Holder<Integer>(startIndex);
 		final Holder<TransferEncodingHeaderValue> transferEncodingHeaderValue = new Holder<TransferEncodingHeaderValue>();
-		final int transferEncodingLength = TransferEncodingHeaderValue.getTransferEncodingLength(value, startIndex, transferEncodingHeaderValue, TransferEncodingHeaderValue.class);
+		final int transferEncodingLength = TransferEncodingHeaderValue.getTransferEncodingLength(value, index, transferEncodingHeaderValue, TransferEncodingHeaderValue.class);
 		parsedValue.value = transferEncodingHeaderValue.value;
 		return transferEncodingLength;
 	}

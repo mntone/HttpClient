@@ -16,8 +16,9 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 		@Override
 		public int apply(final String value, final int startIndex, final Holder<Object> parsedValue)
 		{
+			final Holder<Integer> index = new Holder<Integer>(startIndex);
 			final Holder<String> host = new Holder<String>();
-			final int hostLength = HttpRuleParser.getHostLength(value, startIndex, false, host);
+			final int hostLength = HttpRuleParser.getHostLength(value, index, false, host);
 			parsedValue.value = host.value;
 			return hostLength;
 		}
@@ -39,8 +40,9 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 		@Override
 		public int apply(final String value, final int startIndex, final Holder<Object> parsedValue)
 		{
+			final Holder<Integer> index = new Holder<Integer>(startIndex);
 			final Holder<EntityTagHeaderValue> entityTagHeaderValue = new Holder<EntityTagHeaderValue>();
-			final int entityTagLength = EntityTagHeaderValue.getEntityTagLength(value, startIndex, entityTagHeaderValue);
+			final int entityTagLength = EntityTagHeaderValue.getEntityTagLength(value, index, entityTagHeaderValue);
 			if (entityTagHeaderValue.value == EntityTagHeaderValue.getAny()) return 0;
 			parsedValue.value = entityTagHeaderValue.value;
 			return entityTagLength;
@@ -52,8 +54,9 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 		@Override
 		public int apply(final String value, final int startIndex, final Holder<Object> parsedValue)
 		{
+			final Holder<Integer> index = new Holder<Integer>(startIndex);
 			final Holder<EntityTagHeaderValue> entityTagHeaderValue = new Holder<EntityTagHeaderValue>();
-			final int entityTagLength = EntityTagHeaderValue.getEntityTagLength(value, startIndex, entityTagHeaderValue);
+			final int entityTagLength = EntityTagHeaderValue.getEntityTagLength(value, index, entityTagHeaderValue);
 			parsedValue.value = entityTagHeaderValue.value;
 			return entityTagLength;
 		}
@@ -64,8 +67,9 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 		@Override
 		public int apply(final String value, final int startIndex, final Holder<Object> parsedValue)
 		{
+			final Holder<Integer> index = new Holder<Integer>(startIndex);
 			final Holder<NameValueHeaderValue> nameValueHeaderValue = new Holder<NameValueHeaderValue>();
-			final int nameValueLength = NameValueHeaderValue.getNameValueLength(value, startIndex, nameValueHeaderValue, NameValueHeaderValue.class);
+			final int nameValueLength = NameValueHeaderValue.getNameValueLength(value, index, nameValueHeaderValue, NameValueHeaderValue.class);
 			parsedValue.value = nameValueHeaderValue.value;
 			return nameValueLength;
 		}
@@ -79,8 +83,9 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 		@Override
 		public int apply(final String value, final int startIndex, final Holder<Object> parsedValue)
 		{
+			final Holder<Integer> index = new Holder<Integer>(startIndex);
 			final Holder<ContentDispositionHeaderValue> contentDispositionHeaderValue = new Holder<ContentDispositionHeaderValue>();
-			final int dispositionTypeLength = ContentDispositionHeaderValue.getDispositionTypeLength(value, startIndex, contentDispositionHeaderValue);
+			final int dispositionTypeLength = ContentDispositionHeaderValue.getDispositionTypeLength(value, index, contentDispositionHeaderValue);
 			parsedValue.value = contentDispositionHeaderValue.value;
 			return dispositionTypeLength;
 		}

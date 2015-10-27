@@ -2,6 +2,7 @@ package net.mntone.httpclient.headers;
 
 import net.mntone.httpclient.GenericHelpers;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -138,13 +139,40 @@ public final class HttpHeaderValueCollection<T> implements Collection<T>
 	@Override
 	public Object[] toArray()
 	{
-		throw new NotImplementedException();
+		final Object parsedValue = this._store.getParsedValue(this._headerName);
+		if (parsedValue == null)
+		{
+			return null;
+		}
+		if (!GenericHelpers.isSafetyGenericsList(parsedValue, this._genericClass))
+		{
+			return Arrays.asList((T)parsedValue).toArray();
+		}
+
+		final List<T> list = (List<T>)parsedValue;
+		return list.toArray();
 	}
 
 	@Override
-	public <T1> T1[] toArray(final T1[] a)
+	public <T> T[] toArray(final T[] a)
 	{
-		throw new NotImplementedException();
+		final Object parsedValue = this._store.getParsedValue(this._headerName);
+		if (parsedValue == null)
+		{
+			if (a == null) return null;
+			for (int i = 0; i < a.length; ++i) a[i] = null;
+			return a;
+		}
+		if (!GenericHelpers.isSafetyGenericsList(parsedValue, this._genericClass))
+		{
+			if (a == null || a.length < 1) return Arrays.asList((T)parsedValue).toArray(a);
+			a[0] = (T)parsedValue;
+			for (int i = 1; i < a.length; ++i) a[i] = null;
+			return a;
+		}
+
+		final List<T> list = (List<T>)parsedValue;
+		return list.toArray(a);
 	}
 
 	public void parseAdd(final String input) throws IllegalAccessException

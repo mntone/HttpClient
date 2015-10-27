@@ -18,7 +18,7 @@ abstract class BaseHeaderParser extends HttpHeaderParser
 	{
 		if (input == null || input.isEmpty()) return super.isSupportsMultipleValues();
 
-		Holder<Boolean> flag = new Holder<Boolean>();
+		final Holder<Boolean> flag = new Holder<Boolean>();
 		int num = HttpUtils.getNextNonEmptyOrWhitespaceIndex(input, index.value, super.isSupportsMultipleValues(), flag);
 		if (flag.value && !super.isSupportsMultipleValues()) return false;
 		if (num == input.length())
@@ -27,14 +27,15 @@ abstract class BaseHeaderParser extends HttpHeaderParser
 			return super.isSupportsMultipleValues();
 		}
 
-		Holder<Object> obj = new Holder<Object>();
-		int parsedValueLength = this.getParsedValueLength(input, num, storeValue, obj);
+		final Holder<Object> obj = new Holder<Object>();
+		final int parsedValueLength = this.getParsedValueLength(input, num, storeValue, obj);
 		if (parsedValueLength == 0) return false;
+
 		num += parsedValueLength;
 		num = HttpUtils.getNextNonEmptyOrWhitespaceIndex(input, num, super.isSupportsMultipleValues(), flag);
 		if ((flag.value && !super.isSupportsMultipleValues()) || (!flag.value && num < input.length())) return false;
 		index.value = num;
 		parsedValue.value = obj.value;
-		return false;
+		return true;
 	}
 }

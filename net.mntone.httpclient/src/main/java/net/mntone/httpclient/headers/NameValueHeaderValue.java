@@ -139,48 +139,49 @@ public class NameValueHeaderValue implements Cloneable
 		this._value = value;
 	}
 
-	static <T extends NameValueHeaderValue> int getNameValueLength(final String input, final int startIndex, final Holder<T> parsedValue, final Class<T> targetType)
+	static <T extends NameValueHeaderValue> int getNameValueLength(final String input, final Holder<Integer> index, final Holder<T> parsedValue, final Class<T> targetType)
 	{
 		final int length = input.length();
-		if (startIndex >= length) return 0;
+		if (index.value >= length) return 0;
 
-		final int tokenLength = HttpRuleParser.getTokenLength(input, startIndex);
-		if (tokenLength == 0) return 0;
+		final Holder<Integer> index2 = new Holder<Integer>(index.value);
+		final int nameLength = HttpRuleParser.getTokenLength(input, index2.value);
+		if (nameLength == 0) return 0;
+		final String name = input.substring(index.value, index2.value);
 
-		final String name = input.substring(startIndex, tokenLength);
-		int i = startIndex + tokenLength;
-		i += HttpRuleParser.getWhitespaceLength(input, i);
+		HttpRuleParser.getWhitespaceLength(input, index2);
 
-		if (i >= length || input.charAt(i) != '=')
+		if (index2.value >= length || input.charAt(index2.value) != '=')
 		{
 			try
 			{
 				final NameValueHeaderValue nameValueHeaderValue = targetType.newInstance();
 				nameValueHeaderValue._name = name;
 				parsedValue.value = (T)nameValueHeaderValue;
-				return i - startIndex;
+
+				final int a = index2.value - index.value;
+				index.value = index2.value;
+				return a;
 			}
-			catch (InstantiationException e)
+			catch (final InstantiationException e)
 			{
 				e.printStackTrace();
-				return 0;
 			}
-			catch (IllegalAccessException e)
+			catch (final IllegalAccessException e)
 			{
 				e.printStackTrace();
-				return 0;
 			}
+			return 0;
 		}
+		++index2.value;
+		HttpRuleParser.getWhitespaceLength(input, index2);
 
-		++i;
-		i += HttpRuleParser.getWhitespaceLength(input, i);
-
-		int valueLength = getValueLength(input, i);
+		final int valueIndex = index2.value;
+		final int valueLength = getValueLength(input, index2);
 		if (valueLength == 0) return 0;
+		final String value = input.substring(valueIndex, index2.value);
 
-		final String value = input.substring(i, valueLength);
-		i += HttpRuleParser.getWhitespaceLength(input, i);
-		i += valueLength;
+		HttpRuleParser.getWhitespaceLength(input, index2);
 
 		try
 		{
@@ -188,56 +189,64 @@ public class NameValueHeaderValue implements Cloneable
 			nameValueHeaderValue._name = name;
 			nameValueHeaderValue._value = value;
 			parsedValue.value = (T)nameValueHeaderValue;
-			return i - startIndex;
+
+			final int a = index2.value - index.value;
+			index.value = index2.value;
+			return a;
 		}
-		catch (InstantiationException e)
+		catch (final InstantiationException e)
 		{
 			e.printStackTrace();
-			return 0;
 		}
-		catch (IllegalAccessException e)
+		catch (final IllegalAccessException e)
 		{
 			e.printStackTrace();
-			return 0;
 		}
+		return 0;
 	}
 
 	static <T extends NameValueHeaderValue> int getNameValueCollectionLength(
-		final String input, final int startIndex, final char delimiter, final Collection<T> nameValueCollection, final Class<T> targetType)
+		final String input, final Holder<Integer> index, final char delimiter, final Collection<T> nameValueCollection, final Class<T> targetType)
 	{
 		final int length = input.length();
-		if (startIndex >= length) return 0;
+		if (index.value >= length) return 0;
 
-		int i = startIndex + HttpRuleParser.getWhitespaceLength(input, startIndex);
+		final Holder<Integer> index2 = new Holder<Integer>(index.value);
+		HttpRuleParser.getWhitespaceLength(input, index2);
 		while (true)
 		{
 			final Holder<T> item = new Holder<T>();
-			final int nameValueLength = NameValueHeaderValue.getNameValueLength(input, i, item, targetType);
+			final int nameValueLength = NameValueHeaderValue.getNameValueLength(input, index2, item, targetType);
 			if (nameValueLength == 0) return 0;
-
 			nameValueCollection.add(item.value);
 
-			i += nameValueLength;
-			i += HttpRuleParser.getWhitespaceLength(input, i);
+			HttpRuleParser.getWhitespaceLength(input, index2);
 
-			if (i == length || input.charAt(i) != delimiter) break;
-			++i;
-			i += HttpRuleParser.getWhitespaceLength(input, i);
+			if (index2.value == length || input.charAt(index2.value) != delimiter) break;
+			++index2.value;
+
+			HttpRuleParser.getWhitespaceLength(input, index2);
 		}
-		return i - startIndex;
+
+		final int a = index2.value - index.value;
+		index.value = index2.value;
+		return a;
 	}
 
-	static int getValueLength(final String input, final int startIndex)
+	private static int getValueLength(final String input, final Holder<Integer> index)
 	{
 		final int length = input.length();
-		if (startIndex >= length) return 0;
+		if (index.value >= length) return 0;
 
-		final Holder<Integer> tokenLength = new Holder<Integer>(HttpRuleParser.getTokenLength(input, startIndex));
-		if (tokenLength.value == 0 && HttpRuleParser.getQuotedPairLength(input, startIndex, tokenLength) != HttpParseResult.Parsed) return 0;
+		final Holder<Integer> index2 = new Holder<Integer>(index.value);
+		final Holder<Integer> tokenLength = new Holder<Integer>(HttpRuleParser.getTokenLength(input, index2.value));
+		if (tokenLength.value == 0 && HttpRuleParser.getQuotedStringLength(input, index2.value, tokenLength) != HttpParseResult.Parsed) return 0;
 
+		index.value += tokenLength.value;
 		return tokenLength.value;
 	}
 
+	@SuppressWarnings("Contract")
 	static NameValueHeaderValue find(final Collection<NameValueHeaderValue> collection, final String name)
 	{
 		if (collection == null) return null;
@@ -259,7 +268,8 @@ public class NameValueHeaderValue implements Cloneable
 
 	private static void checkValueFormat(final String value)
 	{
-		if (value != null && !value.isEmpty() && getValueLength(value, 0) != value.length())
+		final Holder<Integer> index = new Holder<Integer>(0);
+		if (value != null && !value.isEmpty() && getValueLength(value, index) != value.length())
 		{
 			throw new IllegalArgumentException();
 		}

@@ -55,66 +55,68 @@ public abstract class TransferEncodingHeaderValueBase extends HttpParameterValue
 		return this._value;
 	}
 
-	static <T extends TransferEncodingHeaderValueBase> int getTransferEncodingLength(final String input, final int startIndex, final Holder<T> parsedValue, Class<T> targetType)
+	static <T extends TransferEncodingHeaderValueBase> int getTransferEncodingLength(final String input, final Holder<Integer> index, final Holder<T> parsedValue, final Class<T> targetType)
 	{
 		final int length = input.length();
-		if (startIndex >= length) return 0;
+		if (index.value >= length) return 0;
 
-		final int tokenLength = HttpRuleParser.getTokenLength(input, startIndex);
+		final Holder<Integer> index2 = new Holder<Integer>(index.value);
+		final int tokenLength = HttpRuleParser.getTokenLength(input, index2);
 		if (tokenLength == 0) return 0;
+		final String value = input.substring(index.value, index2.value);
 
-		final String value = input.substring(startIndex, tokenLength);
-		int i = startIndex + tokenLength;
-		i += HttpRuleParser.getWhitespaceLength(input, i);
+		HttpRuleParser.getWhitespaceLength(input, index2);
 
-		if (i >= length || input.charAt(i) != ';')
+		if (index2.value >= length || input.charAt(index2.value) != ';')
 		{
 			try
 			{
 				final TransferEncodingHeaderValueBase transferEncodingHeaderValue = targetType.newInstance();
 				transferEncodingHeaderValue._value = value;
 				parsedValue.value = (T)transferEncodingHeaderValue;
-				return i - startIndex;
+
+				final int a = index2.value - index.value;
+				index.value = index2.value;
+				return a;
 			}
-			catch (InstantiationException e)
+			catch (final InstantiationException e)
 			{
 				e.printStackTrace();
-				return 0;
 			}
-			catch (IllegalAccessException e)
+			catch (final IllegalAccessException e)
 			{
 				e.printStackTrace();
-				return 0;
 			}
+			return 0;
 		}
-		++i;
+		++index2.value;
 
 		try
 		{
 			final TransferEncodingHeaderValueBase transferEncodingHeaderValue = targetType.newInstance();
 			transferEncodingHeaderValue._value = value;
 
-			final int nameValueListLength = NameValueHeaderValue.getNameValueCollectionLength(input,
-			                                                                                  i,
-			                                                                                  ';',
-			                                                                                  transferEncodingHeaderValue.getParameters(),
-			                                                                                  NameValueHeaderValue.class);
+			final int nameValueListLength = NameValueHeaderValue.getNameValueCollectionLength(
+				input,
+				index2,
+				';',
+				transferEncodingHeaderValue.getParameters(),
+				NameValueHeaderValue.class);
 			if (nameValueListLength == 0) return 0;
-
-			i += nameValueListLength;
-
 			parsedValue.value = (T)transferEncodingHeaderValue;
-			return i - startIndex;
+
+			final int a = index2.value - index.value;
+			index.value = index2.value;
+			return a;
 		}
-		catch (InstantiationException e)
+		catch (final InstantiationException e)
 		{
 			e.printStackTrace();
-			return 0;
 		}
-		catch (IllegalAccessException e)
+		catch (final IllegalAccessException e)
 		{
 			e.printStackTrace();
-			return 0;
 		}
+		return 0;
 	}
 }

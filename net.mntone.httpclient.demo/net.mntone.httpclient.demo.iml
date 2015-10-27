@@ -23,7 +23,9 @@
           <root url="jar://$MODULE_DIR$/../net.mntone.httpclient/build/libs/net.mntone.httpclient-0.8-SNAPSHOT.jar!/" />
         </CLASSES>
         <JAVADOC />
-        <SOURCES />
+        <SOURCES>
+          <root url="file://$MODULE_DIR$/../net.mntone.httpclient/src/main/java" />
+        </SOURCES>
       </library>
     </orderEntry>
   </component>

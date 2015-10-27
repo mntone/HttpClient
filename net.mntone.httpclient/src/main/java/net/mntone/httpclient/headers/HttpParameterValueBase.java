@@ -64,13 +64,13 @@ public abstract class HttpParameterValueBase implements Cloneable
 	@Override
 	public int hashCode()
 	{
-		return NameValueHeaderValue.hashCode(this._parameters);
+		return NameValueHeaderValue.hashCode(this.getParameters());
 	}
 
 	@Override
 	public String toString()
 	{
-		return NameValueHeaderValue.toString(this._parameters, ';', true);
+		return NameValueHeaderValue.toString(this.getParameters(), ';', true);
 	}
 
 	protected final NameValueHeaderValue get(final String name)

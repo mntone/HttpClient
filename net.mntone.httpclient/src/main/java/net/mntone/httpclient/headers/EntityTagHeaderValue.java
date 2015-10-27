@@ -110,48 +110,52 @@ public class EntityTagHeaderValue implements Cloneable
 		return true;
 	}
 
-	static int getEntityTagLength(final String input, final int startIndex, final Holder<EntityTagHeaderValue> parsedValue)
+	static int getEntityTagLength(final String input, final Holder<Integer> index, final Holder<EntityTagHeaderValue> parsedValue)
 	{
 		final int length = input.length();
-		if (startIndex >= length) return 0;
+		if (index.value >= length) return 0;
 
-		int i = startIndex;
+		final Holder<Integer> index2 = new Holder<Integer>(index.value);
 		boolean flag = false;
-		final char c = input.charAt(i);
+		final char c = input.charAt(index2.value);
 		if (c == '*')
 		{
 			parsedValue.value = ANY;
-			++i;
+			++index2.value;
 		}
 		else
 		{
 			if (c == 'W' || c == 'w')
 			{
-				++i;
-				if (i + 2 >= length || input.charAt(i) != '/') return 0;
+				++index2.value;
+				if (index2.value + 2 >= length || input.charAt(index2.value) != '/') return 0;
 				flag = true;
-				++i;
-				i += HttpRuleParser.getWhitespaceLength(input, i);
+				++index2.value;
+				HttpRuleParser.getWhitespaceLength(input, index2);
 			}
 
-			final int startIndex2 = i;
-			final Holder<Integer> i2 = new Holder<Integer>(0);
-			if (HttpRuleParser.getQuotedStringLength(input, i, i2) != HttpParseResult.Parsed) return 0;
+			final int startIndex2 = index2.value;
+			final Holder<Integer> length2 = new Holder<Integer>(0);
+			if (HttpRuleParser.getQuotedStringLength(input, index2.value, length2) != HttpParseResult.Parsed) return 0;
 
 			parsedValue.value = new EntityTagHeaderValue();
-			if (i2.value == length)
+			if (length2.value == length)
 			{
 				parsedValue.value._tag = input;
 				parsedValue.value._weak = false;
 			}
 			else
 			{
-				parsedValue.value._tag = input.substring(startIndex2, i2.value);
+				parsedValue.value._tag = input.substring(startIndex2, length2.value);
 				parsedValue.value._weak = flag;
 			}
-			i += i2.value;
+			index2.value += length2.value;
 		}
-		i += HttpRuleParser.getWhitespaceLength(input, i);
-		return i - startIndex;
+
+		HttpRuleParser.getWhitespaceLength(input, index2);
+
+		final int a = index2.value - index.value;
+		index.value = index2.value;
+		return a;
 	}
 }
