@@ -8,6 +8,7 @@ It’s Modern HttpClient for JVM. It just likes .NET HttpClient.
 ## Requirement
 
 - [jsr166e](http://g.oswego.edu/dl/concurrency-interest/)
+- [Apache Commons Codec](http://commons.apache.org/proper/commons-codec/)
 
 
 ## Usage
