@@ -2,32 +2,21 @@ package net.mntone.httpclient.headers;
 
 import net.mntone.httpclient.HttpRuleParser;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import javax.xml.ws.Holder;
 
-public abstract class MediaTypeHeaderValueBase implements Cloneable
+public abstract class MediaTypeHeaderValueBase extends HttpParameterValueBase
 {
 	private static final String CHARSET = "charset";
 
 	private String _mediaType;
-	ArrayList<NameValueHeaderValue> _parameters;
 
 	MediaTypeHeaderValueBase()
 	{ }
 
 	protected MediaTypeHeaderValueBase(final MediaTypeHeaderValueBase source)
 	{
+		super(source);
 		this._mediaType = source._mediaType;
-		if (this._parameters != null)
-		{
-			this._parameters = new ArrayList<NameValueHeaderValue>();
-			for (final NameValueHeaderValue item : this._parameters)
-			{
-				this._parameters.add(item);
-			}
-		}
 	}
 
 	public MediaTypeHeaderValueBase(final String mediaType)
@@ -40,16 +29,7 @@ public abstract class MediaTypeHeaderValueBase implements Cloneable
 	@Override
 	public MediaTypeHeaderValueBase clone()
 	{
-		try
-		{
-			final MediaTypeHeaderValueBase result = (MediaTypeHeaderValueBase)super.clone();
-			return result;
-		}
-		catch (CloneNotSupportedException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
+		return (MediaTypeHeaderValueBase)super.clone();
 	}
 
 	@Override
@@ -58,19 +38,19 @@ public abstract class MediaTypeHeaderValueBase implements Cloneable
 		if (!(obj instanceof MediaTypeHeaderValueBase)) return false;
 
 		final MediaTypeHeaderValueBase that = (MediaTypeHeaderValueBase)obj;
-		return this._mediaType != null && this._mediaType.equalsIgnoreCase(that._mediaType) && NameValueHeaderValue.areEquals(this._parameters, that._parameters);
+		return this._mediaType != null && this._mediaType.equalsIgnoreCase(that._mediaType) && super.equalsCollection(that.getParameters());
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return this._mediaType.toLowerCase().hashCode() ^ NameValueHeaderValue.hashCode(this._parameters);
+		return this._mediaType.toLowerCase().hashCode() ^ super.hashCode();
 	}
 
 	@Override
 	public String toString()
 	{
-		return this._mediaType + NameValueHeaderValue.toString(this._parameters, ';', true);
+		return this._mediaType + super.toString();
 	}
 
 	public final String getMediaType()
@@ -78,34 +58,13 @@ public abstract class MediaTypeHeaderValueBase implements Cloneable
 		return this._mediaType;
 	}
 
-	public final Collection<NameValueHeaderValue> getParameters()
-	{
-		if (this._parameters == null)
-		{
-			this._parameters = new ArrayList<NameValueHeaderValue>();
-		}
-		return this._parameters;
-	}
-
 	public final String getCharset()
 	{
-		final NameValueHeaderValue nameValueHeaderValue = NameValueHeaderValue.find(this._parameters, CHARSET);
-		if (nameValueHeaderValue == null) return null;
-		return nameValueHeaderValue.getValue();
+		return super.getString(CHARSET);
 	}
-
 	public final void setCharset(final String value)
 	{
-		final NameValueHeaderValue nameValueHeaderValue = NameValueHeaderValue.find(this._parameters, CHARSET);
-		if (value == null || value.isEmpty())
-		{
-			if (nameValueHeaderValue != null) this._parameters.remove(nameValueHeaderValue);
-		}
-		else
-		{
-			if (nameValueHeaderValue != null) nameValueHeaderValue.setValue(value);
-			else this.getParameters().add(new NameValueHeaderValue(CHARSET, value));
-		}
+		super.setString(CHARSET, value);
 	}
 
 	static <T extends MediaTypeHeaderValueBase> int getMediaTypeLength(final String input, final int startIndex, final Holder<T> parsedValue, Class<T> targetType)

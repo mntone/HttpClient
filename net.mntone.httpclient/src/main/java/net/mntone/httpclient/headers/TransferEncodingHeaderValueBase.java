@@ -2,30 +2,19 @@ package net.mntone.httpclient.headers;
 
 import net.mntone.httpclient.HttpRuleParser;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
 import javax.xml.ws.Holder;
 
-public abstract class TransferEncodingHeaderValueBase implements Cloneable
+public abstract class TransferEncodingHeaderValueBase extends HttpParameterValueBase
 {
 	private String _value;
-	ArrayList<NameValueHeaderValue> _parameters;
 
 	TransferEncodingHeaderValueBase()
 	{ }
 
 	protected TransferEncodingHeaderValueBase(final TransferEncodingHeaderValueBase source)
 	{
+		super(source);
 		this._value = source._value;
-		if (this._parameters != null)
-		{
-			this._parameters = new ArrayList<NameValueHeaderValue>();
-			for (final NameValueHeaderValue item : this._parameters)
-			{
-				this._parameters.add(item);
-			}
-		}
 	}
 
 	public TransferEncodingHeaderValueBase(final String value)
@@ -37,16 +26,7 @@ public abstract class TransferEncodingHeaderValueBase implements Cloneable
 	@Override
 	public TransferEncodingHeaderValueBase clone()
 	{
-		try
-		{
-			final TransferEncodingHeaderValueBase result = (TransferEncodingHeaderValueBase)super.clone();
-			return result;
-		}
-		catch (CloneNotSupportedException e)
-		{
-			e.printStackTrace();
-		}
-		return null;
+		return (TransferEncodingHeaderValueBase)super.clone();
 	}
 
 	@Override
@@ -55,33 +35,24 @@ public abstract class TransferEncodingHeaderValueBase implements Cloneable
 		if (!(obj instanceof TransferEncodingHeaderValueBase)) return false;
 
 		final TransferEncodingHeaderValueBase that = (TransferEncodingHeaderValueBase)obj;
-		return this._value != null && this._value.equalsIgnoreCase(that._value) && NameValueHeaderValue.areEquals(this._parameters, that._parameters);
+		return this._value != null && this._value.equalsIgnoreCase(that._value) && super.equalsCollection(that.getParameters());
 	}
 
 	@Override
 	public int hashCode()
 	{
-		return this._value.toLowerCase().hashCode() ^ NameValueHeaderValue.hashCode(this._parameters);
+		return this._value.toLowerCase().hashCode() ^ super.hashCode();
 	}
 
 	@Override
 	public String toString()
 	{
-		return this._value + NameValueHeaderValue.toString(this._parameters, ';', true);
+		return this._value + super.toString();
 	}
 
 	public final String getValue()
 	{
 		return this._value;
-	}
-
-	public final Collection<NameValueHeaderValue> getParameters()
-	{
-		if (this._parameters == null)
-		{
-			this._parameters = new ArrayList<NameValueHeaderValue>();
-		}
-		return this._parameters;
 	}
 
 	static <T extends TransferEncodingHeaderValueBase> int getTransferEncodingLength(final String input, final int startIndex, final Holder<T> parsedValue, Class<T> targetType)

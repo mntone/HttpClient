@@ -21,6 +21,7 @@ public final class HttpContentHeaders extends HttpHeaders
 	static void putParsers(final Map<String, HttpHeaderParser> parserStore)
 	{
 		parserStore.put(HttpHeaderNames.ALLOW, HttpGenericHeaderParser.TokenListParser);
+		parserStore.put(HttpHeaderNames.CONTENT_DISPOSITION, HttpGenericHeaderParser.ContentDispositionParser);
 		parserStore.put(HttpHeaderNames.CONTENT_ENCODING, HttpGenericHeaderParser.TokenListParser);
 		parserStore.put(HttpHeaderNames.CONTENT_LANGUAGE, HttpGenericHeaderParser.TokenListParser);
 		parserStore.put(HttpHeaderNames.CONTENT_LENGTH, Int64NumberHeaderParser.Instance);
@@ -68,6 +69,15 @@ public final class HttpContentHeaders extends HttpHeaders
 	}
 	private HttpHeaderValueCollection<String> _allow;
 
+	public ContentDispositionHeaderValue getContentDisposition()
+	{
+		return (ContentDispositionHeaderValue)super.getParsedValue(HttpHeaderNames.CONTENT_DISPOSITION);
+	}
+	public void setContentDisposition(final ContentDispositionHeaderValue value)
+	{
+		super.setOrRemoveParsedValue(HttpHeaderNames.CONTENT_DISPOSITION, value);
+	}
+
 	public HttpHeaderValueCollection<String> getContentEncoding()
 	{
 		if (this._contentEncoding == null)
@@ -105,7 +115,7 @@ public final class HttpContentHeaders extends HttpHeaders
 	public void setContentLength(final Long value)
 	{
 		super.setOrRemoveParsedValue(HttpHeaderNames.CONTENT_LENGTH, value);
-		contentLengthSet = true;
+		this.contentLengthSet = true;
 	}
 
 	public MediaTypeHeaderValue getContentType()

@@ -4,6 +4,8 @@ import javax.xml.ws.Holder;
 
 public final class TransferEncodingWithQualityHeaderValue extends TransferEncodingHeaderValueBase
 {
+	private static final String QUALITY = "q";
+
 	TransferEncodingWithQualityHeaderValue()
 	{ }
 
@@ -25,11 +27,11 @@ public final class TransferEncodingWithQualityHeaderValue extends TransferEncodi
 
 	public final Double getQuality()
 	{
-		return HttpHeaderUtils.getQuality(this.getParameters());
+		return super.getDouble(QUALITY);
 	}
 	public final void setQuality(final Double value)
 	{
-		HttpHeaderUtils.setQuality(this.getParameters(), value);
+		super.setDouble(QUALITY, value, DOUBLE_0TO1_VALIDATOR);
 	}
 
 	public static TransferEncodingWithQualityHeaderValue parse(final String input)

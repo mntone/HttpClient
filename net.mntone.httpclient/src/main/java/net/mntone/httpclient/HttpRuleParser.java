@@ -2,15 +2,40 @@ package net.mntone.httpclient;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import javax.xml.ws.Holder;
 
 public final class HttpRuleParser
 {
+	private static final String[] dateTimeFormats;
 	private static final boolean[] tokenCharacters;
 
 	static
 	{
+		dateTimeFormats = new String[] {
+				"E, d MMM yyyy H':'m':'s 'GMT'",
+				"E, d MMM yyyy H':'m':'s",
+				"d MMM yyyy H':'m':'s 'GMT'",
+				"d MMM yyyy H':'m':'s",
+				"E, d MMM yy H':'m':'s 'GMT'",
+				"E, d MMM yy H':'m':'s",
+				"d MMM yy H':'m':'s 'GMT'",
+				"d MMM yy H':'m':'s",
+				"EEEE, d'-'MMM'-'yy H':'m':'s 'GMT'",
+				"EEEE, d'-'MMM'-'yy H':'m':'s",
+				"E MMM d H':'m':'s yyyy",
+				"E, d MMM yyyy H':'m':'s zzz",
+				"E, d MMM yyyy H':'m':'s",
+				"d MMM yyyy H':'m':'s zzz",
+				"d MMM yyyy H':'m':'s"
+		};
+
 		tokenCharacters = new boolean[128];
 		for (int i = 0; i < 127; ++i) tokenCharacters[i] = true;
 		tokenCharacters['"'] = false;
@@ -179,7 +204,7 @@ public final class HttpRuleParser
 		return HttpParseResult.Parsed;
 	}
 
-	private static boolean isTokenChar(final char c)
+	public static boolean isTokenChar(final char c)
 	{
 		return c <= '\u007f' && tokenCharacters[(int)c];
 	}
@@ -228,5 +253,34 @@ public final class HttpRuleParser
 			}
 		}
 		return false;
+	}
+
+	public static boolean tryStringToDate(String input, final Holder<Date> result)
+	{
+		input = input.trim();
+		for (final String dateTimeFormat : dateTimeFormats)
+		{
+			final SimpleDateFormat formatter = new SimpleDateFormat(dateTimeFormat, Locale.US);
+			formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+			formatter.setCalendar(new GregorianCalendar());
+			try
+			{
+				result.value = formatter.parse(input);
+				return true;
+			}
+			catch (final ParseException e)
+			{
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	public static String dateToString(final Date input)
+	{
+		final SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy HH':'mm':'ss 'GMT'");
+		formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+		formatter.setCalendar(new GregorianCalendar());
+		return formatter.format(input);
 	}
 }

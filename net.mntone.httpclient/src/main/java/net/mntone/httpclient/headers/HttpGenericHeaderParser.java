@@ -74,6 +74,18 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 	public static final HttpHeaderParser SingleValueNameValueParser = new HttpGenericHeaderParser(false, new NameValueParser());
 	public static final HttpHeaderParser MultipleValueNameValueParser = new HttpGenericHeaderParser(true, new NameValueParser());
 
+	public static final HttpHeaderParser ContentDispositionParser = new HttpGenericHeaderParser(false, new ParsedValueLengthGetter()
+	{
+		@Override
+		public int apply(final String value, final int startIndex, final Holder<Object> parsedValue)
+		{
+			final Holder<ContentDispositionHeaderValue> contentDispositionHeaderValue = new Holder<ContentDispositionHeaderValue>();
+			final int dispositionTypeLength = ContentDispositionHeaderValue.getDispositionTypeLength(value, startIndex, contentDispositionHeaderValue);
+			parsedValue.value = contentDispositionHeaderValue.value;
+			return dispositionTypeLength;
+		}
+	});
+
 
 	private final ParsedValueLengthGetter _lengthGetter;
 	private final EqualityComparer _comparer;
