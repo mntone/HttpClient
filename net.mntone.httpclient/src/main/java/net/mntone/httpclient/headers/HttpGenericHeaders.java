@@ -1,5 +1,6 @@
 package net.mntone.httpclient.headers;
 
+import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ final class HttpGenericHeaders
 	static void putParsers(final Map<String, HttpHeaderParser> parserStore)
 	{
 		parserStore.put(HttpHeaderNames.CONNECTION, HttpGenericHeaderParser.TokenListParser);
+		parserStore.put(HttpHeaderNames.DATE, DateHeaderParser.Instance);
 		parserStore.put(HttpHeaderNames.PRAGMA, HttpGenericHeaderParser.MultipleValueNameValueParser);
 		parserStore.put(HttpHeaderNames.TRAILER, HttpGenericHeaderParser.TokenListParser);
 		parserStore.put(HttpHeaderNames.TRANSFER_ENCODING, TransferEncodingHeaderParser.MultipleValuesParser);
@@ -45,6 +47,15 @@ final class HttpGenericHeaders
 		return this._connectionCore;
 	}
 	private HttpHeaderValueCollection<String> _connectionCore;
+
+	public Date getDate()
+	{
+		return (Date)this._parent.getParsedValue(HttpHeaderNames.DATE);
+	}
+	public void setDate(final Date value)
+	{
+		this._parent.setOrRemoveParsedValue(HttpHeaderNames.DATE, value);
+	}
 
 	public HttpHeaderValueCollection<NameValueHeaderValue> getPragma()
 	{

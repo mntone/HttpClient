@@ -1,5 +1,6 @@
 package net.mntone.httpclient.headers;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -71,6 +72,15 @@ public final class HttpResponseHeaders extends HttpHeaders
 	public HttpHeaderValueCollection<String> getConnection()
 	{
 		return this._genericHeaders.getConnectionCore();
+	}
+
+	public Date getDate()
+	{
+		return this._genericHeaders.getDate();
+	}
+	public void setDate(final Date value)
+	{
+		this._genericHeaders.setDate(value);
 	}
 
 	public EntityTagHeaderValue getETag()

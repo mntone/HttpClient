@@ -2,6 +2,7 @@ package net.mntone.httpclient.headers;
 
 import net.mntone.httpclient.HttpRuleParser;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -78,9 +79,19 @@ public final class HttpRequestHeaders extends HttpHeaders
 	{
 		if (value == null || value.isEmpty()) throw new IllegalArgumentException();
 
+		final Holder<Integer> index = new Holder<Integer>(0);
 		final Holder<String> host = new Holder<String>();
-		if (HttpRuleParser.getHostLength(value, 0, false, host) != value.length()) throw new IllegalArgumentException();
+		if (HttpRuleParser.getHostLength(value, index, false, host) != value.length()) throw new IllegalArgumentException();
 		super.setOrRemoveParsedValue(HttpHeaderNames.HOST, value);
+	}
+
+	public Date getDate()
+	{
+		return this._genericHeaders.getDate();
+	}
+	public void setDate(final Date value)
+	{
+		this._genericHeaders.setDate(value);
 	}
 
 	public HttpHeaderValueCollection<EntityTagHeaderValue> getIfMatch()

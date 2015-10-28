@@ -47,6 +47,12 @@ public final class HttpHeaderValueCollection<T> implements Collection<T>
 	}
 
 	@Override
+	public String toString()
+	{
+		return this._store.getHeaderString(this._headerName);
+	}
+
+	@Override
 	public int size()
 	{
 		return this.getCount();

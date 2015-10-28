@@ -9,6 +9,7 @@ import net.mntone.httpclient.headers.HttpHeaderValueCollection;
 import net.mntone.httpclient.headers.HttpResponseHeaders;
 import net.mntone.httpclient.headers.MediaTypeHeaderValue;
 
+import java.util.Date;
 import java.util.HashMap;
 
 public class Main
@@ -24,12 +25,21 @@ public class Main
 			final HttpResponseMessage response = client.postAsync("http://httpbin.org/post", new FormUrlEncodedContent(postContent)).get();
 			final HttpResponseHeaders responseHeaders = response.getHeaders();
 			final HttpHeaderValueCollection<String> connection = responseHeaders.getConnection();
+			final Date date = responseHeaders.getDate();
 			final HttpContent content = response.getContent();
 			final HttpContentHeaders contentHeaders = content.getHeaders();
 			final MediaTypeHeaderValue contentType = contentHeaders.getContentType();
 			final Long contentLength = contentHeaders.getContentLength();
-			final String resText = content.readAsStringAsync().get();
-			System.out.print(resText);
+			final String contentText = content.readAsStringAsync().get();
+
+			final StringBuilder builder = new StringBuilder();
+			builder.append(String.format("Connection: %s\n", connection));
+			builder.append(String.format("Date: %s\n", date));
+			builder.append(String.format("Content-Type: %s\n", contentType));
+			builder.append(String.format("Content-Length: %s\n", contentLength));
+			builder.append('\n');
+			builder.append(contentText);
+			System.out.print(builder.toString());
 		}
 		catch (final Exception e)
 		{

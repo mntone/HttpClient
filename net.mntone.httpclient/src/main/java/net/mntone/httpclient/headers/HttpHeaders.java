@@ -710,23 +710,35 @@ public abstract class HttpHeaders implements Iterable<Map.Entry<String, String[]
 	{
 		if (this._headerStore == null) return EmptyIterator.getInstance();
 
-		ArrayList<Map.Entry<String, String>> list = new ArrayList<Map.Entry<String, String>>();
+		final ArrayList<Map.Entry<String, String>> list = new ArrayList<Map.Entry<String, String>>();
 		for (final Map.Entry<String, HeaderStoreItemInfo> v : this._headerStore.entrySet())
 		{
 			final String key = v.getKey();
 			final HeaderStoreItemInfo info = v.getValue();
-			final String headerStrings = this.getHeaderString(info);
+			final String headerStrings = getHeaderString(info);
 			list.add(new AbstractMap.SimpleImmutableEntry<String, String>(key, headerStrings));
 		}
 		return list.iterator();
 	}
 
-	private final String getHeaderString(final HeaderStoreItemInfo info)
+	String getHeaderString(final String name)
 	{
-		return this.getHeaderString(info, null);
+		return getHeaderString(name, null);
 	}
 
-	private final String getHeaderString(final HeaderStoreItemInfo info, final Object exclude)
+	String getHeaderString(final String name, final Object exclude)
+	{
+		final Holder<HeaderStoreItemInfo> info = new Holder<HeaderStoreItemInfo>();
+		if (!this.tryGetHeaderInfo(name, info)) return "";
+		return getHeaderString(info.value, exclude);
+	}
+
+	private static String getHeaderString(final HeaderStoreItemInfo info)
+	{
+		return getHeaderString(info, null);
+	}
+
+	private static String getHeaderString(final HeaderStoreItemInfo info, final Object exclude)
 	{
 		final String result;
 		final String[] values = getValuesAsString(info, exclude);

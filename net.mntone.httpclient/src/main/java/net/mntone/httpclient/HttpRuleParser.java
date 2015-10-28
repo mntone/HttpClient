@@ -315,8 +315,8 @@ public final class HttpRuleParser
 		for (final String dateTimeFormat : dateTimeFormats)
 		{
 			final SimpleDateFormat formatter = new SimpleDateFormat(dateTimeFormat, Locale.US);
-			formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
 			formatter.setCalendar(new GregorianCalendar());
+			formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
 			try
 			{
 				result.value = formatter.parse(input);
@@ -332,9 +332,9 @@ public final class HttpRuleParser
 
 	public static String dateToString(final Date input)
 	{
-		final SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy HH':'mm':'ss 'GMT'");
-		formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
+		final SimpleDateFormat formatter = new SimpleDateFormat("E, dd MMM yyyy HH':'mm':'ss 'GMT'", Locale.US);
 		formatter.setCalendar(new GregorianCalendar());
+		formatter.setTimeZone(TimeZone.getTimeZone("GMT"));
 		return formatter.format(input);
 	}
 }

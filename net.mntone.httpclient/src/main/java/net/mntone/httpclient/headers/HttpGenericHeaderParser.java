@@ -114,7 +114,7 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 	}
 
 	@Override
-	public EqualityComparer getComparer()
+	public final EqualityComparer getComparer()
 	{
 		return this._comparer;
 	}
