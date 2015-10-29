@@ -27,9 +27,13 @@ public final class HttpRequestHeaders extends HttpHeaders
 
 	static void putParsers(final Map<String, HttpHeaderParser> parserStore)
 	{
+		parserStore.put(HttpHeaderNames.ACCEPT, MediaTypeWithQualityHeaderParser.MultipleValuesParser);
 		parserStore.put(HttpHeaderNames.HOST, HttpGenericHeaderParser.HostParser);
 		parserStore.put(HttpHeaderNames.IF_MATCH, HttpGenericHeaderParser.MultipleValueEntityTagParser);
+		parserStore.put(HttpHeaderNames.IF_MODIFIED_SINCE, DateHeaderParser.Instance);
 		parserStore.put(HttpHeaderNames.IF_NONE_MATCH, HttpGenericHeaderParser.MultipleValueEntityTagParser);
+		parserStore.put(HttpHeaderNames.IF_UNMODIFIED_SINCE, DateHeaderParser.Instance);
+		parserStore.put(HttpHeaderNames.MAX_FORWARDS, Int32NumberHeaderParser.Instance);
 		parserStore.put(HttpHeaderNames.TE, TransferEncodingWithQualityHeaderParser.MultipleValuesParser);
 		parserStore.put(HttpHeaderNames.USER_AGENT, ProductInfoHeaderParser.MultipleValueParser);
 	}
@@ -75,6 +79,16 @@ public final class HttpRequestHeaders extends HttpHeaders
 		final HttpRequestHeaders httpRequestHeaders = (HttpRequestHeaders)sourceHeaders;
 		this._genericHeaders.addSpecialsFrom(httpRequestHeaders._genericHeaders);
 	}
+
+	public HttpHeaderValueCollection<MediaTypeWithQualityHeaderValue> getAccept()
+	{
+		if (this._accept == null)
+		{
+			this._accept = new HttpHeaderValueCollection<MediaTypeWithQualityHeaderValue>(HttpHeaderNames.ACCEPT, this, MediaTypeWithQualityHeaderValue.class);
+		}
+		return this._accept;
+	}
+	private HttpHeaderValueCollection<MediaTypeWithQualityHeaderValue> _accept;
 
 	public HttpHeaderValueCollection<String> getConnection()
 	{
@@ -123,6 +137,15 @@ public final class HttpRequestHeaders extends HttpHeaders
 	}
 	private HttpHeaderValueCollection<EntityTagHeaderValue> _isMatch;
 
+	public Date getIfModifiedSince()
+	{
+		return (Date)this.getParsedValue(HttpHeaderNames.IF_MODIFIED_SINCE);
+	}
+	public void setIfModifiedSince(final Date value)
+	{
+		this.setOrRemoveParsedValue(HttpHeaderNames.IF_MODIFIED_SINCE, value);
+	}
+
 	public HttpHeaderValueCollection<EntityTagHeaderValue> getIfNoneMatch()
 	{
 		if (this._isNoneMatch == null)
@@ -132,6 +155,24 @@ public final class HttpRequestHeaders extends HttpHeaders
 		return this._isNoneMatch;
 	}
 	private HttpHeaderValueCollection<EntityTagHeaderValue> _isNoneMatch;
+
+	public Date getIfUnmodifiedSince()
+	{
+		return (Date)this.getParsedValue(HttpHeaderNames.IF_UNMODIFIED_SINCE);
+	}
+	public void setIfUnmodifiedSince(final Date value)
+	{
+		this.setOrRemoveParsedValue(HttpHeaderNames.IF_UNMODIFIED_SINCE, value);
+	}
+
+	public Integer getMaxForwards()
+	{
+		return (Integer)this.getParsedValue(HttpHeaderNames.MAX_FORWARDS);
+	}
+	public void setMaxForwards(final Integer value)
+	{
+		this.setOrRemoveParsedValue(HttpHeaderNames.MAX_FORWARDS, value);
+	}
 
 	public HttpHeaderValueCollection<NameValueHeaderValue> getPragma()
 	{
