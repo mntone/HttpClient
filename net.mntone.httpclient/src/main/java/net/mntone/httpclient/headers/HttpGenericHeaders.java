@@ -31,6 +31,7 @@ final class HttpGenericHeaders
 
 	private final HttpHeaders _parent;
 
+	private boolean _connectionCloseSet = false;
 	private boolean _transferEncodingChunkedSet = false;
 
 	public HttpGenericHeaders(final HttpHeaders parent)
@@ -47,6 +48,26 @@ final class HttpGenericHeaders
 		return this._connectionCore;
 	}
 	private HttpHeaderValueCollection<String> _connectionCore;
+
+	public Boolean getConnectionClose()
+	{
+		if (this.getConnectionCore().isSpecialValueSet()) return true;
+		if (this._connectionCloseSet) return false;
+		return null;
+	}
+	public void setConnectionClose(final Boolean value)
+	{
+		if (value)
+		{
+			this._connectionCloseSet = true;
+			this.getConnectionCore().setSpecialValue();
+		}
+		else
+		{
+			this._connectionCloseSet = false;
+			this.getConnectionCore().removeSpecialValue();
+		}
+	}
 
 	public Date getDate()
 	{

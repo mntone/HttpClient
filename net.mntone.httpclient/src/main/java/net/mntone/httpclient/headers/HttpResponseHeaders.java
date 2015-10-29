@@ -74,6 +74,15 @@ public final class HttpResponseHeaders extends HttpHeaders
 		return this._genericHeaders.getConnectionCore();
 	}
 
+	public Boolean getConnectionClose()
+	{
+		return this._genericHeaders.getConnectionClose();
+	}
+	public void setConnectionCore(final Boolean value)
+	{
+		this._genericHeaders.setConnectionClose(value);
+	}
+
 	public Date getDate()
 	{
 		return this._genericHeaders.getDate();
