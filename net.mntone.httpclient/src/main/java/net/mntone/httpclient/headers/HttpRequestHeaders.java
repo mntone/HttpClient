@@ -31,6 +31,7 @@ public final class HttpRequestHeaders extends HttpHeaders
 		parserStore.put(HttpHeaderNames.IF_MATCH, HttpGenericHeaderParser.MultipleValueEntityTagParser);
 		parserStore.put(HttpHeaderNames.IF_NONE_MATCH, HttpGenericHeaderParser.MultipleValueEntityTagParser);
 		parserStore.put(HttpHeaderNames.TE, TransferEncodingWithQualityHeaderParser.MultipleValuesParser);
+		parserStore.put(HttpHeaderNames.USER_AGENT, ProductInfoHeaderParser.MultipleValueParser);
 	}
 
 	static int KNOWN_HEADERS_COUNT = 19;
@@ -155,4 +156,14 @@ public final class HttpRequestHeaders extends HttpHeaders
 	{
 		this._genericHeaders.setTransferEncodingChunked(value);
 	}
+
+	public HttpHeaderValueCollection<ProductInfoHeaderValue> getUserAgent()
+	{
+		if (this._userAgent == null)
+		{
+			this._userAgent = new HttpHeaderValueCollection<ProductInfoHeaderValue>(HttpHeaderNames.USER_AGENT, this, ProductInfoHeaderValue.class);
+		}
+		return this._userAgent;
+	}
+	private HttpHeaderValueCollection<ProductInfoHeaderValue> _userAgent;
 }

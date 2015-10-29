@@ -25,6 +25,7 @@ public final class HttpResponseHeaders extends HttpHeaders
 	{
 		parserStore.put(HttpHeaderNames.ACCEPT_RANGES, HttpGenericHeaderParser.TokenListParser);
 		parserStore.put(HttpHeaderNames.ENTITY_TAG, HttpGenericHeaderParser.SingleValueEntityTagParser);
+		parserStore.put(HttpHeaderNames.SERVER, ProductInfoHeaderParser.MultipleValueParser);
 		parserStore.put(HttpHeaderNames.VARY, HttpGenericHeaderParser.TokenListParser);
 	}
 
@@ -125,6 +126,16 @@ public final class HttpResponseHeaders extends HttpHeaders
 	{
 		this._genericHeaders.setTransferEncodingChunked(value);
 	}
+
+	public HttpHeaderValueCollection<ProductInfoHeaderValue> getServer()
+	{
+		if (this._server == null)
+		{
+			this._server = new HttpHeaderValueCollection<ProductInfoHeaderValue>(HttpHeaderNames.SERVER, this, ProductInfoHeaderValue.class);
+		}
+		return this._server;
+	}
+	private HttpHeaderValueCollection<ProductInfoHeaderValue> _server;
 
 	public HttpHeaderValueCollection<String> getVary()
 	{
