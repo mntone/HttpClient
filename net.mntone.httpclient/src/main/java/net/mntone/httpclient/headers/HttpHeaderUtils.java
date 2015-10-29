@@ -1,8 +1,11 @@
 package net.mntone.httpclient.headers;
 
+import net.mntone.httpclient.HttpParseResult;
 import net.mntone.httpclient.HttpRuleParser;
 
 import java.util.Collection;
+
+import javax.xml.ws.Holder;
 
 final class HttpHeaderUtils
 {
@@ -42,7 +45,18 @@ final class HttpHeaderUtils
 
 	static void checkValidToken(final String value)
 	{
-		if (value == null || value.isEmpty() || HttpRuleParser.getTokenLength(value, 0) != value.length()) throw new IllegalArgumentException();
+		if (value == null || value.isEmpty()) throw new IllegalArgumentException();
+
+		final Holder<Integer> index = new Holder<Integer>(0);
+		if (HttpRuleParser.getTokenLength(value, index) != value.length()) throw new IllegalArgumentException();
+	}
+
+	static void checkValidComment(final String value)
+	{
+		if (value == null || value.isEmpty()) throw new IllegalArgumentException();
+
+		final Holder<Integer> length = new Holder<Integer>(0);
+		if (HttpRuleParser.getCommentLength(value, 0, length) != HttpParseResult.Parsed || length.value != value.length()) throw new IllegalArgumentException();
 	}
 
 	public static void validateToken(final HttpHeaderValueCollection<String> target, final String value)

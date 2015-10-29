@@ -29,7 +29,8 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 		@Override
 		public int apply(final String value, final int startIndex, final Holder<Object> parsedValue)
 		{
-			final int tokenLength = HttpRuleParser.getTokenLength(value, startIndex);
+			final Holder<Integer> index = new Holder<Integer>(startIndex);
+			final int tokenLength = HttpRuleParser.getTokenLength(value, index);
 			parsedValue.value = value.substring(startIndex, tokenLength);
 			return tokenLength;
 		}
@@ -75,8 +76,9 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 		}
 	}
 
-	public static final HttpHeaderParser SingleValueNameValueParser = new HttpGenericHeaderParser(false, new NameValueParser());
-	public static final HttpHeaderParser MultipleValueNameValueParser = new HttpGenericHeaderParser(true, new NameValueParser());
+	private static final NameValueParser DefaultNameValueParser = new NameValueParser();
+	public static final HttpHeaderParser SingleValueNameValueParser = new HttpGenericHeaderParser(false, DefaultNameValueParser);
+	public static final HttpHeaderParser MultipleValueNameValueParser = new HttpGenericHeaderParser(true, DefaultNameValueParser);
 
 	public static final HttpHeaderParser ContentDispositionParser = new HttpGenericHeaderParser(false, new ParsedValueLengthGetter()
 	{
@@ -90,6 +92,24 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 			return dispositionTypeLength;
 		}
 	});
+
+
+	private static class ProductParser implements ParsedValueLengthGetter
+	{
+		@Override
+		public int apply(final String value, final int startIndex, final Holder<Object> parsedValue)
+		{
+			final Holder<Integer> index = new Holder<Integer>(startIndex);
+			final Holder<ProductHeaderValue> productHeaderValue = new Holder<ProductHeaderValue>();
+			final int productHeaderLength = ProductHeaderValue.getProductLength(value, index, productHeaderValue);
+			parsedValue.value = productHeaderValue.value;
+			return productHeaderLength;
+		}
+	}
+
+	private static final ProductParser DefaultProductParser = new ProductParser();
+	public static final HttpHeaderParser SingleValueProductParser = new HttpGenericHeaderParser(false, DefaultProductParser);
+	public static final HttpHeaderParser MultipleValueProductParser = new HttpGenericHeaderParser(true, DefaultProductParser);
 
 
 	private final ParsedValueLengthGetter _lengthGetter;

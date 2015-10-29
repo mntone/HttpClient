@@ -321,7 +321,7 @@ public final class ContentDispositionHeaderValue extends HttpParameterValueBase
 			flag = true;
 			input = encodeMime(input);
 		}
-		else if (!flag && HttpRuleParser.getTokenLength(input, 0) != input.length())
+		else if (!flag && HttpRuleParser.getTokenLength(input) != input.length())
 		{
 			flag = true;
 		}

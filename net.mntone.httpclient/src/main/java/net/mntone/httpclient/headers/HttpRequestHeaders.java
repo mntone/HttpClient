@@ -198,6 +198,11 @@ public final class HttpRequestHeaders extends HttpHeaders
 		this._genericHeaders.setTransferEncodingChunked(value);
 	}
 
+	public HttpHeaderValueCollection<ProductInfoHeaderParser> getUpgrade()
+	{
+		return this._genericHeaders.getUpgrade();
+	}
+
 	public HttpHeaderValueCollection<ProductInfoHeaderValue> getUserAgent()
 	{
 		if (this._userAgent == null)

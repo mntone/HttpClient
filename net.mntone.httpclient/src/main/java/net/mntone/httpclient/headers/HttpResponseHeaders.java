@@ -137,6 +137,11 @@ public final class HttpResponseHeaders extends HttpHeaders
 	}
 	private HttpHeaderValueCollection<ProductInfoHeaderValue> _server;
 
+	public HttpHeaderValueCollection<ProductInfoHeaderParser> getUpgrade()
+	{
+		return this._genericHeaders.getUpgrade();
+	}
+
 	public HttpHeaderValueCollection<String> getVary()
 	{
 		if (this._vary == null)

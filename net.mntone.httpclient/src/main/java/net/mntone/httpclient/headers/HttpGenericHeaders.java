@@ -13,6 +13,7 @@ final class HttpGenericHeaders
 		parserStore.put(HttpHeaderNames.PRAGMA, HttpGenericHeaderParser.MultipleValueNameValueParser);
 		parserStore.put(HttpHeaderNames.TRAILER, HttpGenericHeaderParser.TokenListParser);
 		parserStore.put(HttpHeaderNames.TRANSFER_ENCODING, TransferEncodingHeaderParser.MultipleValuesParser);
+		parserStore.put(HttpHeaderNames.UPGRADE, HttpGenericHeaderParser.MultipleValueProductParser);
 	}
 
 	static int KNOWN_HEADERS_COUNT = 9;
@@ -157,4 +158,14 @@ final class HttpGenericHeaders
 		return this._transferEncodingCore;
 	}
 	private HttpHeaderValueCollection<TransferEncodingHeaderValue> _transferEncodingCore;
+
+	public HttpHeaderValueCollection<ProductInfoHeaderParser> getUpgrade()
+	{
+		if (this._upgrade == null)
+		{
+			this._upgrade = new HttpHeaderValueCollection<ProductInfoHeaderParser>(HttpHeaderNames.UPGRADE, this._parent, ProductInfoHeaderParser.class);
+		}
+		return this._upgrade;
+	}
+	private HttpHeaderValueCollection<ProductInfoHeaderParser> _upgrade;
 }

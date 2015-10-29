@@ -145,7 +145,7 @@ public class NameValueHeaderValue implements Cloneable
 		if (index.value >= length) return 0;
 
 		final Holder<Integer> index2 = new Holder<Integer>(index.value);
-		final int nameLength = HttpRuleParser.getTokenLength(input, index2.value);
+		final int nameLength = HttpRuleParser.getTokenLength(input, index2);
 		if (nameLength == 0) return 0;
 		final String name = input.substring(index.value, index2.value);
 
@@ -239,9 +239,11 @@ public class NameValueHeaderValue implements Cloneable
 		if (index.value >= length) return 0;
 
 		final Holder<Integer> index2 = new Holder<Integer>(index.value);
-		final Holder<Integer> tokenLength = new Holder<Integer>(HttpRuleParser.getTokenLength(input, index2.value));
-		if (tokenLength.value == 0 && HttpRuleParser.getQuotedStringLength(input, index2.value, tokenLength) != HttpParseResult.Parsed) return 0;
-
+		final Holder<Integer> tokenLength = new Holder<Integer>(HttpRuleParser.getTokenLength(input, index2));
+		if (tokenLength.value == 0)
+		{
+			if (HttpRuleParser.getQuotedStringLength(input, index.value, tokenLength) != HttpParseResult.Parsed) return 0;
+		}
 		index.value += tokenLength.value;
 		return tokenLength.value;
 	}

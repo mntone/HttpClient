@@ -1,38 +1,40 @@
 package net.mntone.httpclient.headers;
 
+import net.mntone.httpclient.HttpParseResult;
 import net.mntone.httpclient.HttpRuleParser;
 
 import javax.xml.ws.Holder;
 
 public final class ProductInfoHeaderValue implements Cloneable
 {
-	private final String _name;
-	private final String _version;
+	private final ProductHeaderValue _product;
+	private final String _comment;
 
 	private ProductInfoHeaderValue(final ProductInfoHeaderValue source)
 	{
-		this._name = source._name;
-		this._version = source._version;
+		this._product = source._product;
+		this._comment = source._comment;
 	}
 
-	public ProductInfoHeaderValue(final String name)
+	public ProductInfoHeaderValue(final ProductHeaderValue product)
 	{
-		this(name, null);
+		if (product == null) throw new IllegalArgumentException();
+
+		this._product = product;
+		this._comment = null;
 	}
 
 	public ProductInfoHeaderValue(final String name, final String version)
 	{
-		HttpHeaderUtils.checkValidToken(name);
-		if (version != null && !version.isEmpty())
-		{
-			HttpHeaderUtils.checkValidToken(version);
-			this._version = version;
-		}
-		else
-		{
-			this._version = null;
-		}
-		this._name = name;
+		this(new ProductHeaderValue(name, version));
+	}
+
+	public ProductInfoHeaderValue(final String comment)
+	{
+		HttpHeaderUtils.checkValidComment(comment);
+
+		this._product = null;
+		this._comment = comment;
 	}
 
 	@Override
@@ -56,41 +58,42 @@ public final class ProductInfoHeaderValue implements Cloneable
 		if (!(obj instanceof ProductInfoHeaderValue)) return false;
 
 		final ProductInfoHeaderValue that = (ProductInfoHeaderValue)obj;
-		return this._name.equalsIgnoreCase(that._name) && this._version != null && this._version.equalsIgnoreCase(that._version);
+		if (this._product == null)
+		{
+			if (that._product == null)
+			{
+				return this._comment != null && this._comment.equals(that._comment);
+			}
+			return false;
+		}
+		return this._product.equals(that._product);
 	}
 
 	@Override
 	public int hashCode()
 	{
-		int hashCode = this._name.toLowerCase().hashCode();
-		if (this._version != null && !this._version.isEmpty())
-		{
-			hashCode ^= this._version.toLowerCase().hashCode();
-		}
-		return hashCode;
+		if (this._product == null) return this._comment.hashCode();
+		return this._product.hashCode();
 	}
 
 	@Override
 	public String toString()
 	{
-		if (this._version != null && !this._version.isEmpty())
-		{
-			return this._name;
-		}
-		return this._name + '/' + this._version;
+		if (this._product == null) return this._comment;
+		return this._product.toString();
 	}
 
-	public static ProductInfoHeaderValue parse(final String input)
+	public static ProductHeaderValue parse(final String input)
 	{
-		return (ProductInfoHeaderValue)ProductInfoHeaderParser.SingleValueParser.parseValue(input);
+		return (ProductHeaderValue)ProductInfoHeaderParser.SingleValueParser.parseValue(input);
 	}
 
-	public static boolean tryParse(final String input, final Holder<ProductInfoHeaderValue> parsedValue)
+	public static boolean tryParse(final String input, final Holder<ProductHeaderValue> parsedValue)
 	{
 		final Holder<Object> obj = new Holder<Object>();
 		if (!ProductInfoHeaderParser.SingleValueParser.tryParseValue(input, obj)) return false;
 
-		parsedValue.value = (ProductInfoHeaderValue)obj.value;
+		parsedValue.value = (ProductHeaderValue)obj.value;
 		return true;
 	}
 
@@ -100,35 +103,30 @@ public final class ProductInfoHeaderValue implements Cloneable
 		if (index.value >= length) return 0;
 
 		final Holder<Integer> index2 = new Holder<Integer>(index.value);
-		final int nameLength = HttpRuleParser.getTokenLength(input, index2);
-		if (nameLength == 0) return 0;
-
-		final String name = input.substring(index.value, index2.value);
-
-		HttpRuleParser.getWhitespaceLength(input, index2);
-
-		if (index2.value == length || input.charAt(index2.value) != '/')
+		if (input.charAt(index2.value) == '(')
 		{
-			final ProductInfoHeaderValue productInfoHeaderValue = new ProductInfoHeaderValue(name);
+			final Holder<Integer> length2 = new Holder<Integer>(0);
+			if (HttpRuleParser.getCommentLength(input, index2.value, length2) != HttpParseResult.Parsed) return 0;
+
+			index2.value += length2.value;
+
+			final String comment = input.substring(index.value, index2.value);
+
+			HttpRuleParser.getWhitespaceLength(input, index2);
+
+			final ProductInfoHeaderValue productInfoHeaderValue = new ProductInfoHeaderValue(comment);
 			parsedValue.value = productInfoHeaderValue;
 
 			final int a = index2.value - index.value;
 			index.value = index2.value;
 			return a;
 		}
-		++index2.value;
 
-		HttpRuleParser.getWhitespaceLength(input, index2);
+		final Holder<ProductHeaderValue> productHeaderValue = new Holder<ProductHeaderValue>();
+		final int productLength = ProductHeaderValue.getProductLength(input, index2, productHeaderValue);
+		if (productLength == 0) return 0;
 
-		final int versionStartIndex = index2.value;
-		final int versionLength = HttpRuleParser.getTokenLength(input, index2);
-		if (versionLength == 0) return 0;
-
-		final String version = input.substring(versionStartIndex, index2.value);
-
-		HttpRuleParser.getWhitespaceLength(input, index2);
-
-		final ProductInfoHeaderValue productInfoHeaderValue = new ProductInfoHeaderValue(name, version);
+		final ProductInfoHeaderValue productInfoHeaderValue = new ProductInfoHeaderValue(productHeaderValue.value);
 		parsedValue.value = productInfoHeaderValue;
 
 		final int a = index2.value - index.value;

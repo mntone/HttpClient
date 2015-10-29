@@ -428,7 +428,7 @@ public abstract class HttpHeaders implements Iterable<Map.Entry<String, String[]
 
 	private void checkHeaderName(final String name) throws IllegalAccessException
 	{
-		if (name == null || name.isEmpty() || HttpRuleParser.getTokenLength(name, 0) != name.length())
+		if (name == null || name.isEmpty() || HttpRuleParser.getTokenLength(name) != name.length())
 		{
 			throw new IllegalArgumentException();
 		}
@@ -440,7 +440,7 @@ public abstract class HttpHeaders implements Iterable<Map.Entry<String, String[]
 
 	private boolean tryCheckHeaderName(final String name)
 	{
-		return name != null && !name.isEmpty() && HttpRuleParser.getTokenLength(name, 0) == name.length() && (this._invalidHeaders == null || !this._invalidHeaders.contains(name));
+		return name != null && !name.isEmpty() && HttpRuleParser.getTokenLength(name) == name.length() && (this._invalidHeaders == null || !this._invalidHeaders.contains(name));
 	}
 
 	//endregion
@@ -723,7 +723,7 @@ public abstract class HttpHeaders implements Iterable<Map.Entry<String, String[]
 
 	String getHeaderString(final String name)
 	{
-		return getHeaderString(name, null);
+		return this.getHeaderString(name, null);
 	}
 
 	String getHeaderString(final String name, final Object exclude)

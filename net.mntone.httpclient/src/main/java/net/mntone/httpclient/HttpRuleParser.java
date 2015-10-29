@@ -111,18 +111,10 @@ public final class HttpRuleParser
 		return a;
 	}
 
-	public static int getTokenLength(final String input, final int startIndex)
+	public static int getTokenLength(final String input)
 	{
-		final int length = input.length();
-		if (startIndex >= length) return 0;
-		for (int i = startIndex; i < length; ++i)
-		{
-			if (!isTokenChar(input.charAt(i)))
-			{
-				return i - startIndex;
-			}
-		}
-		return length - startIndex;
+		final Holder<Integer> index = new Holder<Integer>(0);
+		return getTokenLength(input, index);
 	}
 
 	public static int getTokenLength(final String input, final Holder<Integer> index)
@@ -202,6 +194,12 @@ public final class HttpRuleParser
 	public static HttpParseResult getQuotedStringLength(final String input, final int startIndex, final Holder<Integer> length)
 	{
 		return getExpressionLength(input, startIndex, '"', '"', length);
+	}
+
+	public static HttpParseResult getCommentLength(final String input, final int startIndex, final Holder<Integer> length)
+	{
+		final Holder<Integer> nestedCount = new Holder<Integer>(0);
+		return getExpressionLength(input, startIndex, '(', ')', true, nestedCount, length);
 	}
 
 	private static HttpParseResult getExpressionLength(final String input, final int startIndex, final char openChar, final char closeChar, final Holder<Integer> length)
