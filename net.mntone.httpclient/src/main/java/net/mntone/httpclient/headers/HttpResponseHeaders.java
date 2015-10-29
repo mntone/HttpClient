@@ -52,11 +52,12 @@ public final class HttpResponseHeaders extends HttpHeaders
 	}
 
 	@Override
-	void addHeaders(final HttpHeaders sourceHeaders)
+	protected void addHeaders(final HttpHeaders sourceHeaders)
 	{
 		super.addHeaders(sourceHeaders);
 
 		final HttpResponseHeaders httpResponseHeaders = (HttpResponseHeaders)sourceHeaders;
+		this._genericHeaders.addSpecialsFrom(httpResponseHeaders._genericHeaders);
 	}
 
 	public HttpHeaderValueCollection<String> getAcceptRanges()

@@ -29,6 +29,21 @@ final class HttpGenericHeaders
 		headerSet.add(HttpHeaderNames.WARNING);
 	}
 
+	final void addSpecialsFrom(final HttpGenericHeaders sourceHeaders)
+	{
+		final Boolean connectionClose = sourceHeaders.getConnectionClose();
+		if (connectionClose == null)
+		{
+			this.setConnectionClose(connectionClose);
+		}
+
+		final Boolean transferEncodingChunked = sourceHeaders.getTransferEncodingChunked();
+		if (transferEncodingChunked == null)
+		{
+			this.setTransferEncodingChunked(transferEncodingChunked);
+		}
+	}
+
 	private final HttpHeaders _parent;
 
 	private boolean _connectionCloseSet = false;

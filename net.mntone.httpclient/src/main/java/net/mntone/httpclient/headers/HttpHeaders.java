@@ -23,7 +23,7 @@ public abstract class HttpHeaders implements Iterable<Map.Entry<String, String[]
 	{
 	}
 
-	void setConfiguration(final Map<String, HttpHeaderParser> parserStore, final Set<String> invalidHeaders)
+	protected final void setConfiguration(final Map<String, HttpHeaderParser> parserStore, final Set<String> invalidHeaders)
 	{
 		this._parserStore = parserStore;
 		this._invalidHeaders = invalidHeaders;
@@ -757,7 +757,7 @@ public abstract class HttpHeaders implements Iterable<Map.Entry<String, String[]
 
 	//endregion
 
-	void addHeaders(final HttpHeaders sourceHeaders)
+	protected void addHeaders(final HttpHeaders sourceHeaders)
 	{
 		if (sourceHeaders._headerStore == null) return;
 

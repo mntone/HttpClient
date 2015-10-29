@@ -66,6 +66,15 @@ public final class HttpRequestHeaders extends HttpHeaders
 		super.setConfiguration(_parserStore, _invalidHeaders);
 	}
 
+	@Override
+	protected void addHeaders(final HttpHeaders sourceHeaders)
+	{
+		super.addHeaders(sourceHeaders);
+
+		final HttpRequestHeaders httpRequestHeaders = (HttpRequestHeaders)sourceHeaders;
+		this._genericHeaders.addSpecialsFrom(httpRequestHeaders._genericHeaders);
+	}
+
 	public HttpHeaderValueCollection<String> getConnection()
 	{
 		return this._genericHeaders.getConnection();
