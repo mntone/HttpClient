@@ -39,15 +39,10 @@ final class HttpGenericHeaders
 		this._parent = parent;
 	}
 
-	HttpHeaderValueCollection<String> getConnectionCore()
+	public HttpHeaderValueCollection<String> getConnection()
 	{
-		if (this._connectionCore == null)
-		{
-			this._connectionCore = new HttpHeaderValueCollection<String>(HttpHeaderNames.CONNECTION, this._parent, HttpHeaderUtils.getTokenValidator(), String.class);
-		}
-		return this._connectionCore;
+		return this.getConnectionCore();
 	}
-	private HttpHeaderValueCollection<String> _connectionCore;
 
 	public Boolean getConnectionClose()
 	{
@@ -68,6 +63,17 @@ final class HttpGenericHeaders
 			this.getConnectionCore().removeSpecialValue();
 		}
 	}
+
+	private HttpHeaderValueCollection<String> getConnectionCore()
+	{
+		if (this._connectionCore == null)
+		{
+			this._connectionCore = new HttpHeaderValueCollection<String>(HttpHeaderNames.CONNECTION, this._parent, HttpHeaderUtils.getTokenValidator(), String.class);
+		}
+		return this._connectionCore;
+	}
+	private HttpHeaderValueCollection<String> _connectionCore;
+
 
 	public Date getDate()
 	{
@@ -124,7 +130,7 @@ final class HttpGenericHeaders
 		}
 	}
 
-	HttpHeaderValueCollection<TransferEncodingHeaderValue> getTransferEncodingCore()
+	private HttpHeaderValueCollection<TransferEncodingHeaderValue> getTransferEncodingCore()
 	{
 		if (this._transferEncodingCore == null)
 		{

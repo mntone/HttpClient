@@ -71,7 +71,7 @@ public final class HttpResponseHeaders extends HttpHeaders
 
 	public HttpHeaderValueCollection<String> getConnection()
 	{
-		return this._genericHeaders.getConnectionCore();
+		return this._genericHeaders.getConnection();
 	}
 
 	public Boolean getConnectionClose()
