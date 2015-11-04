@@ -18,7 +18,7 @@ final class Int32NumberHeaderParser extends BaseHeaderParser
 	{
 		final Holder<Integer> index = new Holder<Integer>(startIndex);
 		final int numberLength = HttpRuleParser.getNumberLength(value, index, false);
-		if (numberLength <= 0 || numberLength >= 9) return 0;
+		if (numberLength == 0 || numberLength >= 9) return 0;
 		final String numberText = value.substring(startIndex, index.value);
 
 		int number = 0;
@@ -26,7 +26,7 @@ final class Int32NumberHeaderParser extends BaseHeaderParser
 		{
 			number = Integer.parseInt(numberText);
 		}
-		catch (NumberFormatException e)
+		catch (final NumberFormatException e)
 		{
 			e.printStackTrace();
 		}

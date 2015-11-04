@@ -73,19 +73,19 @@ public enum HttpStatusCode
 	NotExtended(510),
 	NetworkAuthenticationRequired(511);
 
-	private final int _statusCode;
+	private final short _statusCode;
 
 	HttpStatusCode(final int statusCode)
 	{
-		this._statusCode = statusCode;
+		this._statusCode = (short)statusCode;
 	}
 
-	public int toInt()
+	public short toShort()
 	{
 		return this._statusCode;
 	}
 
-	public static HttpStatusCode fromInt(final int statusCode)
+	public static HttpStatusCode fromShort(final short statusCode)
 	{
 		switch (statusCode)
 		{

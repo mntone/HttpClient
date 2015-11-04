@@ -71,7 +71,7 @@ public class NameValueHeaderValue implements Cloneable
 	@Override
 	public int hashCode()
 	{
-		int hashCode = this._name.toLowerCase().hashCode();
+		final int hashCode = this._name.toLowerCase().hashCode();
 		if (this._value == null || this._value.isEmpty()) return hashCode;
 
 		if (this._value.charAt(0) == '"') return hashCode ^ this._value.hashCode();

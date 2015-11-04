@@ -239,7 +239,7 @@ public class HttpClientHandler extends HttpMessageHandler
 		try
 		{
 			final int statusCode = connection.getResponseCode();
-			response.setStatusCode(HttpStatusCode.fromInt(statusCode));
+			response.setStatusCode(HttpStatusCode.fromShort((short)statusCode));
 
 			final String statusDescription = connection.getResponseMessage();
 			if (statusDescription != null && !statusDescription.isEmpty())

@@ -93,7 +93,7 @@ final class HttpStatusDescription
 
 	public static String getStatusDescription(final HttpStatusCode statusCode)
 	{
-		return getStatusDescription(statusCode.toInt());
+		return getStatusDescription(statusCode.toShort());
 	}
 
 	public static String getStatusDescription(final int statusCode)
