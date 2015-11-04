@@ -59,6 +59,59 @@ final class HttpHeaderUtils
 		if (HttpRuleParser.getCommentLength(value, 0, length) != HttpParseResult.Parsed || length.value != value.length()) throw new IllegalArgumentException();
 	}
 
+	static void checkValidQuotedString(final String value)
+	{
+		if (value == null || value.isEmpty()) throw new IllegalArgumentException();
+
+		final Holder<Integer> length = new Holder<Integer>(0);
+		if (HttpRuleParser.getQuotedStringLength(value, 0, length) != HttpParseResult.Parsed || length.value != value.length()) throw new IllegalArgumentException();
+	}
+
+	static boolean tryParseInt16(final String value, final Holder<Short> parsedValue)
+	{
+		parsedValue.value = 0;
+		try
+		{
+			parsedValue.value = Short.parseShort(value);
+		}
+		catch (final NumberFormatException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	static boolean tryParseInt32(final String value, final Holder<Integer> parsedValue)
+	{
+		parsedValue.value = 0;
+		try
+		{
+			parsedValue.value = Integer.parseInt(value);
+		}
+		catch (final NumberFormatException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
+	static boolean tryParseInt64(final String value, final Holder<Long> parsedValue)
+	{
+		parsedValue.value = 0L;
+		try
+		{
+			parsedValue.value = Long.parseLong(value);
+		}
+		catch (final NumberFormatException e)
+		{
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+	}
+
 	public static void validateToken(final HttpHeaderValueCollection<String> target, final String value)
 	{
 		checkValidToken(value);

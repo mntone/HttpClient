@@ -151,4 +151,9 @@ public final class HttpResponseHeaders extends HttpHeaders
 		return this._vary;
 	}
 	private HttpHeaderValueCollection<String> _vary;
+
+	public HttpHeaderValueCollection<WarningHeaderValue> getWarning()
+	{
+		return this._genericHeaders.getWarning();
+	}
 }

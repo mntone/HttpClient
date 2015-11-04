@@ -212,4 +212,9 @@ public final class HttpRequestHeaders extends HttpHeaders
 		return this._userAgent;
 	}
 	private HttpHeaderValueCollection<ProductInfoHeaderValue> _userAgent;
+
+	public HttpHeaderValueCollection<WarningHeaderValue> getWarning()
+	{
+		return this._genericHeaders.getWarning();
+	}
 }

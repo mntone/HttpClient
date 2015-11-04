@@ -14,6 +14,7 @@ final class HttpGenericHeaders
 		parserStore.put(HttpHeaderNames.TRAILER, HttpGenericHeaderParser.TokenListParser);
 		parserStore.put(HttpHeaderNames.TRANSFER_ENCODING, TransferEncodingHeaderParser.MultipleValuesParser);
 		parserStore.put(HttpHeaderNames.UPGRADE, HttpGenericHeaderParser.MultipleValueProductParser);
+		parserStore.put(HttpHeaderNames.WARNING, HttpGenericHeaderParser.MultipleValueWarningParser);
 	}
 
 	static int KNOWN_HEADERS_COUNT = 9;
@@ -165,4 +166,14 @@ final class HttpGenericHeaders
 		return this._upgrade;
 	}
 	private HttpHeaderValueCollection<ProductInfoHeaderParser> _upgrade;
+
+	public HttpHeaderValueCollection<WarningHeaderValue> getWarning()
+	{
+		if (this._warning == null)
+		{
+			this._warning = new HttpHeaderValueCollection<WarningHeaderValue>(HttpHeaderNames.WARNING, this._parent, WarningHeaderValue.class);
+		}
+		return this._warning;
+	}
+	private HttpHeaderValueCollection<WarningHeaderValue> _warning;
 }

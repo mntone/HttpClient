@@ -111,6 +111,22 @@ final class HttpGenericHeaderParser extends BaseHeaderParser
 	public static final HttpHeaderParser SingleValueProductParser = new HttpGenericHeaderParser(false, DefaultProductParser);
 	public static final HttpHeaderParser MultipleValueProductParser = new HttpGenericHeaderParser(true, DefaultProductParser);
 
+	private static class WarningParser implements ParsedValueLengthGetter
+	{
+		@Override
+		public int apply(final String value, final int startIndex, final Holder<Object> parsedValue)
+		{
+			final Holder<Integer> index = new Holder<Integer>(startIndex);
+			final Holder<WarningHeaderValue> warningHeaderValue = new Holder<WarningHeaderValue>();
+			final int dispositionTypeLength = WarningHeaderValue.getWarningLength(value, index, warningHeaderValue);
+			parsedValue.value = warningHeaderValue.value;
+			return dispositionTypeLength;
+		}
+	}
+
+	private static final WarningParser DefaultWarningParser = new WarningParser();
+	public static final HttpHeaderParser SingleValueWarningParser = new HttpGenericHeaderParser(false, DefaultWarningParser);
+	public static final HttpHeaderParser MultipleValueWarningParser = new HttpGenericHeaderParser(true, DefaultWarningParser);
 
 	private final ParsedValueLengthGetter _lengthGetter;
 	private final EqualityComparer _comparer;
