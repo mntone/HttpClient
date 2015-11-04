@@ -32,16 +32,13 @@ final class HttpGenericHeaders
 
 	final void addSpecialsFrom(final HttpGenericHeaders sourceHeaders)
 	{
-		final Boolean connectionClose = sourceHeaders.getConnectionClose();
-		if (connectionClose == null)
+		if (this.getConnectionClose() == null)
 		{
-			this.setConnectionClose(connectionClose);
+			this.setConnectionClose(sourceHeaders.getConnectionClose());
 		}
-
-		final Boolean transferEncodingChunked = sourceHeaders.getTransferEncodingChunked();
-		if (transferEncodingChunked == null)
+		if (this.getTransferEncodingChunked() == null)
 		{
-			this.setTransferEncodingChunked(transferEncodingChunked);
+			this.setTransferEncodingChunked(sourceHeaders.getTransferEncodingChunked());
 		}
 	}
 
